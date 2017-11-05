@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "464312232966",
+    "firebase_url": "https://csm117-chefinder.firebaseio.com",
+    "project_id": "csm117-chefinder",
+    "storage_bucket": "csm117-chefinder.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:464312232966:android:ce9bf4d86126bc90",
+        "android_client_info": {
+          "package_name": "com.example.csm117.chefinder"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "464312232966-rc1kq02mv201ibc0gq425uip649ebepp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-CnjLtZzgWwUmuiKXbgh_yVIQ5ZLEmAU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
