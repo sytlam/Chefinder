@@ -7,28 +7,32 @@
     tools:context="com.example.csm117.chefinder.MainActivity">
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="464dp"
+        android:layout_marginStart="116dp"
         android:text="Welcome to Chefinder!!"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <Button
         android:id="@+id/homepage_button"
         android:layout_width="184dp"
         android:layout_height="43dp"
         android:text="Go to homepage"
-        tools:layout_editor_absoluteX="100dp"
-        tools:layout_editor_absoluteY="180dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/login_button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="23dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="30dp" />
+        android:layout_marginBottom="44dp"
+        app:layout_constraintBottom_toTopOf="@+id/homepage_button"
+        app:layout_constraintStart_toStartOf="@+id/homepage_button" />
 
 </android.support.constraint.ConstraintLayout>
