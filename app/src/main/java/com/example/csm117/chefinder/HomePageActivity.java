@@ -9,8 +9,6 @@ import android.widget.TextView;
 
 public class HomePageActivity extends AppCompatActivity {
 
-    private TextView mTextMessage;
-
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -18,13 +16,13 @@ public class HomePageActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_groups:
-                    mTextMessage.setText(R.string.title_groups);
+                    setTitle(R.string.title_groups);
                     return true;
                 case R.id.navigation_ingredients:
-                    mTextMessage.setText(R.string.title_ingredient_list);
+                    setTitle(R.string.title_ingredient_list);
                     return true;
                 case R.id.navigation_notifications:
-                    mTextMessage.setText(R.string.title_notifications);
+                    setTitle(R.string.title_notifications);
                     return true;
             }
             return false;
@@ -36,9 +34,9 @@ public class HomePageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
 
-        mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        setTitle(R.string.title_groups);
     }
 
 }
