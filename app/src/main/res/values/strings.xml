@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Chefinder</string>
+    <string name="title_groups">Your Groups</string>
+    <string name="title_ingredient_list">Ingredient List</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_activity_home_page">Home Page</string>
+    <string name="action_settings">Settings</string>
 </resources>
