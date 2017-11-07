@@ -6,6 +6,11 @@
     android:layout_height="match_parent"
     tools:context="com.example.csm117.chefinder.MainActivity">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Welcome to Chefinder!!"
+        app:layout_constraintBottom_toBottomOf="parent"
     <Button
         android:id="@+id/homepage_button"
         android:layout_width="184dp"
@@ -17,4 +22,13 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/login_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp" />
+
 </android.support.constraint.ConstraintLayout>
