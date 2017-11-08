@@ -9,9 +9,11 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -30,8 +32,10 @@ import com.facebook.appevents.AppEventsLogger;
 public class MainActivity extends AppCompatActivity {
 
     private Button homepage;
+    private LoginButton loginButton;
     private CallbackManager callbackManager;
     private FirebaseAuth mAuth;
+    private AccessTokenTracker tracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Facebook login button
         callbackManager = CallbackManager.Factory.create();
-        LoginButton loginButton = (LoginButton)findViewById(R.id.login_button);
+        loginButton = (LoginButton)findViewById(R.id.login_button);
         loginButton.setReadPermissions("email", "public_profile");
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -71,6 +75,20 @@ public class MainActivity extends AppCompatActivity {
                 updateUI(null);
             }
         });
+
+        // token tracker to track if user logs out
+        tracker = new AccessTokenTracker() {
+            @Override
+            protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken,
+                                                       AccessToken currentAccessToken) {
+                if (currentAccessToken == null) {
+                    //write your code here what to do when user logout
+                    System.out.println("logout");
+                    mAuth.signOut();
+                    LoginManager.getInstance().logOut();
+                }
+            }
+        };
     }
 
     @Override
@@ -95,7 +113,9 @@ public class MainActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
+                            System.out.println("task is successful");
                             FirebaseUser user = mAuth.getCurrentUser();
+                            System.out.println("facebook access user: " + user);
                             updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
@@ -115,12 +135,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             System.out.println("not logged in");
         }
-    }
-
-    public void testMethod() {
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        DatabaseReference ref = db.getReference("message"); // Key
-        ref.setValue("This is a test message"); // Value
     }
 
     private void gotoHomepage() {

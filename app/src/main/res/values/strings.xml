@@ -11,4 +11,6 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="go_to_groups">Go To Groups</string>
+    <string name="add_ingredient">Add</string>
+    <string name="ingredient">Ingredient</string>
 </resources>
