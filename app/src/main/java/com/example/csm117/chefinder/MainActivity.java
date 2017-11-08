@@ -28,6 +28,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
+import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -61,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
             public void onSuccess(LoginResult loginResult) {
                 System.out.println("login success: " + loginResult);
                 handleFacebookAccessToken(loginResult.getAccessToken());
+                getFriendList(loginResult.getAccessToken());
             }
 
             @Override
@@ -89,6 +96,21 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
+    }
+
+    public void getFriendList(AccessToken token)    {
+        new GraphRequest(
+                AccessToken.getCurrentAccessToken(),
+                "/{friend-list-id}",
+                null,
+                HttpMethod.GET,
+                new GraphRequest.Callback() {
+                    public void onCompleted(GraphResponse response) {
+                        /* handle the result */
+                        System.out.println("Buenos dias");
+                    }
+                }
+        ).executeAsync();
     }
 
     @Override
