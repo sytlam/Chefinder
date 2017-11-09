@@ -42,14 +42,6 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".GroupsActivity"
-            android:label="@string/title_activity_groups"
-            android:parentActivityName=".HomePageActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.csm117.chefinder.HomePageActivity" />
-        </activity>
     </application>
 
 </manifest>
