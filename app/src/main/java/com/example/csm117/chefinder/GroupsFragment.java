@@ -74,7 +74,13 @@ public class GroupsFragment extends Fragment {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_groups, container, false);
         FloatingActionButton b = v.findViewById(R.id.addGroupsButton);
-        addGroupToListView();
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addGroupToListView();
+            }
+        });
+
         return v;
     }
 
