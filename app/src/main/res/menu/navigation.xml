@@ -15,5 +15,10 @@
         android:id="@+id/navigation_notifications"
         android:icon="@drawable/ic_notifications_black_24dp"
         android:title="@string/title_notifications" />
-
+		
+    <item
+        android:id="@+id/navigation_invitation"
+        android:icon="@drawable/ic_person_add_black_24dp"
+        android:title="@string/title_invite" />
+		
 </menu>
