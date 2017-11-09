@@ -8,6 +8,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 
 /**
@@ -29,6 +34,7 @@ public class GroupsFragment extends Fragment {
 //    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    private View v;
 
     public GroupsFragment() {
         // Required empty public constructor
@@ -66,8 +72,9 @@ public class GroupsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_groups, container, false);
+        v = inflater.inflate(R.layout.fragment_groups, container, false);
         FloatingActionButton b = v.findViewById(R.id.addGroupsButton);
+        addGroupToListView();
         return v;
     }
 
@@ -93,6 +100,23 @@ public class GroupsFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    private void addGroupToListView(){
+        ListView listView = v.findViewById(R.id.groupList);
+        String[] groupNames = {"fdt","real talk", "that one badminton clique"};
+        ArrayList<String> groupsList = new ArrayList<String>();
+        groupsList.addAll(Arrays.asList(groupNames));
+        ArrayAdapter<String> listAdapater = new ArrayAdapter<String>(getActivity(),R.layout.group_row,groupsList);
+        listAdapater.add("lmao");
+        listAdapater.add("hola");
+        listAdapater.add("is this even working");
+        for (int i = 0;i<20;i++) {
+            listAdapater.add(Integer.toString(i));
+        }
+
+        listView.setAdapter(listAdapater);
+
     }
 
     /**
