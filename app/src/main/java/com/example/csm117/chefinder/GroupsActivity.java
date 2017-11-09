@@ -11,16 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.HttpMethod;
-import com.facebook.AccessToken;
-
-
 public class GroupsActivity extends AppCompatActivity {
-
-
-
 
 
     @Override
@@ -43,21 +34,5 @@ public class GroupsActivity extends AppCompatActivity {
         TextView t = (TextView) findViewById(R.id.message);
         t.setText(R.string.title_activity_groups);
     }
-
-  /*  private void createEvent()  {
-        new GraphRequest(
-                AccessToken.getCurrentAccessToken(),
-                "/{event-id}",
-                null,
-                HttpMethod.GET,
-                new GraphRequest.Callback() {
-                    public void onCompleted(GraphResponse response) {
-
-                    }
-                }
-        ).executeAsync();
-    }  */
-
-
 
 }
