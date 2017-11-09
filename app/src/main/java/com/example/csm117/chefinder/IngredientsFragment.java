@@ -109,7 +109,6 @@ public class IngredientsFragment extends Fragment implements View.OnClickListene
         System.out.println(user);
 
         if (user != null) {
-
             db = FirebaseDatabase.getInstance();
             setUpDB();
 
@@ -151,12 +150,23 @@ public class IngredientsFragment extends Fragment implements View.OnClickListene
         String ingredient = addIngredientText.getText().toString();
         System.out.println(ingredient);
 
+        if (ingredient.isEmpty()) { // can't enter a blank ingredient
+            Toast msg = Toast.makeText(getActivity(),"Please enter an ingredient",
+                    Toast.LENGTH_LONG);
+            TextView txt = (TextView) msg.getView().findViewById(android.R.id.message);
+            if (txt != null) {
+                txt.setGravity(Gravity.CENTER);
+            }
+            msg.show();
+            return;
+        }
+
         if (user != null) { // user has signed in with fb, allow them to add ingredients
             String userId = user.getUid();
             System.out.println(userId);
 
             DatabaseReference dbRef = db.getReference(userId);
-            dbRef.push().setValue((Object)ingredient);
+            dbRef.child("ingredients").push().setValue((Object)ingredient);
             addIngredientText.setText("");
         }
         else {
@@ -176,7 +186,7 @@ public class IngredientsFragment extends Fragment implements View.OnClickListene
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 itemsAdapter.clear();
-                for (DataSnapshot eventSnapshot : dataSnapshot.getChildren()) {
+                for (DataSnapshot eventSnapshot : dataSnapshot.child("ingredients").getChildren()) {
                     System.out.println("data change");
                     String val = eventSnapshot.getValue(String.class);
                     System.out.println(val);
