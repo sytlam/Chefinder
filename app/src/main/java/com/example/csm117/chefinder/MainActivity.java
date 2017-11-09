@@ -31,8 +31,10 @@ import com.facebook.appevents.AppEventsLogger;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
-import com.facebook.AccessToken;
-import com.facebook.AccessTokenTracker;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONArray;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -106,9 +108,23 @@ public class MainActivity extends AppCompatActivity {
                 HttpMethod.GET,
                 new GraphRequest.Callback() {
                     public void onCompleted(GraphResponse response) {
-                        /* handle the result */
-                        AccessToken.getCurrentAccessToken().getPermissions();
-                        System.out.println("Here is response: " + response);
+                        //AccessToken.getCurrentAccessToken().getPermissions();
+                        JSONObject friends = response.getJSONObject();
+                        JSONArray friendList = null;
+                        try {
+                            friendList = friends.getJSONArray("data");
+                            System.out.println("parse success.");
+                        } catch(JSONException e)    {
+                            e.printStackTrace();
+                        }
+                        for (int i = 0; i < friendList.length(); i++)   {
+                            try {
+                                JSONObject amigo = friendList.getJSONObject(i);
+                                System.out.println("name of friend is: " + amigo.getString("name"));
+                            } catch(JSONException e)    {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                 }
         ).executeAsync();
