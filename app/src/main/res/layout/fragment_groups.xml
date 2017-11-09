@@ -1,4 +1,4 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
 
     android:layout_width="match_parent"
@@ -6,21 +6,18 @@
     tools:context="com.example.csm117.chefinder.GroupsFragment">
 
 
-   <RelativeLayout
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/addGroupsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
 
-       android:layout_width="match_parent"
-       android:layout_height="match_parent">
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="64dp"
+        android:src="@android:drawable/ic_menu_add" />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/addGroupsButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_add"
-            android:layout_alignBottom="@+id/groupList"
-            android:layout_alignRight="@+id/groupList"
-            android:layout_marginRight="16dp"
-            android:layout_marginBottom="16dp"
-            />
+
 
         <ListView
             android:id="@+id/groupList"
@@ -30,5 +27,5 @@
             android:layout_alignParentRight="true"
             android:layout_marginTop="17dp">
         </ListView>
-   </RelativeLayout>
-</FrameLayout>
+
+</RelativeLayout>
