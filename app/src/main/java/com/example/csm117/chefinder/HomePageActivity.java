@@ -9,7 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-public class HomePageActivity extends AppCompatActivity implements IngredientsFragment.OnFragmentInteractionListener {
+public class HomePageActivity extends AppCompatActivity implements GroupsFragment.OnFragmentInteractionListener, IngredientsFragment.OnFragmentInteractionListener {
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -22,7 +22,7 @@ public class HomePageActivity extends AppCompatActivity implements IngredientsFr
                 case R.id.navigation_groups:
                     setTitle(R.string.title_groups);
                     // temp to avoid crashes
-                    selectedFragment = IngredientsFragment.newInstance();
+                    selectedFragment = GroupsFragment.newInstance();
                     break;
                 case R.id.navigation_ingredients:
                     setTitle(R.string.title_ingredient_list);
@@ -50,6 +50,10 @@ public class HomePageActivity extends AppCompatActivity implements IngredientsFr
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         setTitle(R.string.title_groups);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.frame_layout, GroupsFragment.newInstance());
+        transaction.commit();
     }
 
     @Override
