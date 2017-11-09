@@ -4,12 +4,13 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
+//import android.support.v7.widget.LinearLayoutManager;
 //import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -36,7 +37,7 @@ import java.util.ArrayList;
  * Use the {@link IngredientsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class IngredientsFragment extends Fragment implements View.OnClickListener {
+public class IngredientsFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener {
     /*
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -120,6 +121,7 @@ public class IngredientsFragment extends Fragment implements View.OnClickListene
             //ingredients = new ArrayList<>();
 
             list = (ListView) v.findViewById(R.id.list);
+            list.setOnItemClickListener(this);
             itemsAdapter =
                     new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, new ArrayList<String>());
             list.setAdapter(itemsAdapter);
@@ -230,6 +232,11 @@ public class IngredientsFragment extends Fragment implements View.OnClickListene
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        System.out.println("item " + i + " was clicked");
     }
 
     /**
