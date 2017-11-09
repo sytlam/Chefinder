@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         // Facebook login button
         callbackManager = CallbackManager.Factory.create();
         loginButton = (LoginButton)findViewById(R.id.login_button);
-        loginButton.setReadPermissions("email", "public_profile");
+        loginButton.setReadPermissions("email", "public_profile", "user_friends");
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -101,13 +101,14 @@ public class MainActivity extends AppCompatActivity {
     public void getFriendList(AccessToken token)    {
         new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
-                "/{friend-list-id}",
+                "/me/friends",
                 null,
                 HttpMethod.GET,
                 new GraphRequest.Callback() {
                     public void onCompleted(GraphResponse response) {
                         /* handle the result */
-                        System.out.println("Buenos dias");
+                        AccessToken.getCurrentAccessToken().getPermissions();
+                        System.out.println("Here is response: " + response);
                     }
                 }
         ).executeAsync();
