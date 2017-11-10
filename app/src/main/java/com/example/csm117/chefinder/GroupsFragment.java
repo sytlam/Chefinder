@@ -1,6 +1,8 @@
 package com.example.csm117.chefinder;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -35,6 +37,11 @@ public class GroupsFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     private View v;
+    private static final int REQUEST_CODE_ADD_GROUP = 1;
+    ListView listView;
+    ArrayList<String> groupsList;
+    ArrayAdapter<String> listAdapater;
+
 
     public GroupsFragment() {
         // Required empty public constructor
@@ -61,6 +68,10 @@ public class GroupsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        groupsList = new ArrayList<String>();
+        String[] groupNames = {};
+        groupsList.addAll(Arrays.asList(groupNames));
+        listAdapater = new ArrayAdapter<String>(getActivity(),R.layout.group_row,groupsList);
 //        if (getArguments() != null) {
 //            mParam1 = getArguments().getString(ARG_PARAM1);
 //            mParam2 = getArguments().getString(ARG_PARAM2);
@@ -77,7 +88,8 @@ public class GroupsFragment extends Fragment {
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addGroupToListView();
+                System.out.println("Button Clicked");
+                goToAddGroupActivity();
             }
         });
 
@@ -108,19 +120,35 @@ public class GroupsFragment extends Fragment {
         mListener = null;
     }
 
-    private void addGroupToListView(){
-        ListView listView = v.findViewById(R.id.groupList);
-        String[] groupNames = {"fdt","real talk", "that one badminton clique"};
-        ArrayList<String> groupsList = new ArrayList<String>();
-        groupsList.addAll(Arrays.asList(groupNames));
-        ArrayAdapter<String> listAdapater = new ArrayAdapter<String>(getActivity(),R.layout.group_row,groupsList);
-        listAdapater.add("lmao");
-        listAdapater.add("hola");
-        listAdapater.add("is this even working");
-        for (int i = 0;i<20;i++) {
-            listAdapater.add(Integer.toString(i));
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (REQUEST_CODE_ADD_GROUP == requestCode) {
+            if (Activity.RESULT_OK == resultCode) {
+                final String groupName = data.getStringExtra(AddingGroupsActivity.EXTRA_GROUP_NAME);
+                addGroupToListView(groupName);
+            }
         }
+        else {
+            super.onActivityResult(requestCode,resultCode,data);
+        }
+    }
 
+    private void goToAddGroupActivity() {
+        Intent i = new Intent(getActivity(),AddingGroupsActivity.class);
+        startActivityForResult(i,REQUEST_CODE_ADD_GROUP);
+
+    }
+
+
+
+    private void addGroupToDb(){
+
+    }
+
+    private void addGroupToListView(String name){
+        listView = v.findViewById(R.id.groupList);
+
+        listAdapater.add(name);
         listView.setAdapter(listAdapater);
 
     }

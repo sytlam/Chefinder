@@ -11,7 +11,7 @@
     <string name="title_activity_groups">GroupsActivity</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
-
+    <string name="group_add_textBox">Add Group Name Here</string>
     <string name="add_ingredient">Add</string>
     <string name="ingredient">Ingredient</string>
 
