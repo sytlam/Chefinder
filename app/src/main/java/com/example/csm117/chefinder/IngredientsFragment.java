@@ -24,6 +24,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -235,8 +236,32 @@ public class IngredientsFragment extends Fragment implements View.OnClickListene
     }
 
     @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+    public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
         System.out.println("item " + i + " was clicked");
+        DatabaseReference dbRef = db.getReference(user.getUid());
+        System.out.println(itemsAdapter.getItem(i));
+        Query itemQuery = dbRef.child("ingredients");
+        itemQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                System.out.println("delete data");
+                System.out.println(dataSnapshot.getKey());
+                System.out.println(dataSnapshot.getChildrenCount());
+                for (DataSnapshot eventSnapshot : dataSnapshot.getChildren()) {
+                    System.out.println(eventSnapshot.getKey());
+                    System.out.println(eventSnapshot.getValue());
+                    if (eventSnapshot.getValue() == (String)itemsAdapter.getItem(i)) {
+                        eventSnapshot.getRef().removeValue();
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("Cancelled");
+            }
+        });
     }
 
     /**
