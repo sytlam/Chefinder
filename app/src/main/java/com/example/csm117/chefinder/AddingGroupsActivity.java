@@ -35,6 +35,7 @@ public class AddingGroupsActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     EditText editText = findViewById(R.id.groupName);
                     String s = editText.getText().toString();
+                    addGroupToDb(s);
 
                        Intent i = new Intent();
                         i.putExtra(EXTRA_GROUP_NAME,s);
@@ -46,11 +47,8 @@ public class AddingGroupsActivity extends AppCompatActivity {
         }
 
 
-
-
-
-    private void addGroupToDb(Group g) {
-        //TODO
+    private void addGroupToDb(String groupName) {
+        
     }
 
 

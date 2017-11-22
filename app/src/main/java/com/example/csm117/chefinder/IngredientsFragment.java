@@ -168,8 +168,9 @@ public class IngredientsFragment extends Fragment implements View.OnClickListene
             String userId = user.getUid();
             System.out.println(userId);
 
-            DatabaseReference dbRef = db.getReference(userId);
-            dbRef.child("ingredients").push().setValue((Object)ingredient);
+            DatabaseReference dbRef = db.getReference("users");
+                    //db.getReference(userId);
+            dbRef.child(userId + "/ingredients").push().setValue((Object)ingredient);
             addIngredientText.setText("");
         }
         else {
@@ -184,8 +185,8 @@ public class IngredientsFragment extends Fragment implements View.OnClickListene
     }
 
     public void setUpDB() {
-        DatabaseReference dbRef = db.getReference(user.getUid());
-        dbRef.addValueEventListener(new ValueEventListener() {
+        DatabaseReference dbRef = db.getReference("users");//db.getReference(user.getUid());
+        dbRef.child(user.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 itemsAdapter.clear();
@@ -238,9 +239,9 @@ public class IngredientsFragment extends Fragment implements View.OnClickListene
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
         System.out.println("item " + i + " was clicked");
-        DatabaseReference dbRef = db.getReference(user.getUid());
+        DatabaseReference dbRef = db.getReference("users");
         System.out.println(itemsAdapter.getItem(i));
-        Query itemQuery = dbRef.child("ingredients");
+        Query itemQuery = dbRef.child(user.getUid() + "/ingredients");
         itemQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

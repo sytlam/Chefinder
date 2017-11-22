@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -25,7 +26,7 @@ import java.util.Arrays;
  * Use the {@link GroupsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class GroupsFragment extends Fragment {
+public class GroupsFragment extends Fragment implements AdapterView.OnItemClickListener {
 //    // TODO: Rename parameter arguments, choose names that match
 //    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 //    private static final String ARG_PARAM1 = "param1";
@@ -76,7 +77,6 @@ public class GroupsFragment extends Fragment {
 //            mParam1 = getArguments().getString(ARG_PARAM1);
 //            mParam2 = getArguments().getString(ARG_PARAM2);
 //        }
-
     }
 
     @Override
@@ -150,8 +150,15 @@ public class GroupsFragment extends Fragment {
 
         listAdapater.add(name);
         listView.setAdapter(listAdapater);
+        listView.setOnItemClickListener(this);
 
     }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        System.out.println("item " + i + " was clicked");
+    }
+
 
     /**
      * This interface must be implemented by activities that contain this
