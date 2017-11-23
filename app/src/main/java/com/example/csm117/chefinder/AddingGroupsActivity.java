@@ -80,7 +80,7 @@ public class AddingGroupsActivity extends AppCompatActivity {
             //db.getReference(userId);
             //dbRef.child(userId + "/ingredients").push().setValue((Object)ingredient);
             dbRef.child(groupName).child("name").setValue(groupName);
-            dbRef.child(groupName).child("users").push().setValue(userId);
+            dbRef.child(groupName).child("members").push().setValue(userId);
 
             dbRef = db.getReference("users");
             dbRef.child(userId).child("groups").push().setValue(groupName);

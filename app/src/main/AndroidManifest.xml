@@ -42,7 +42,10 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".AddingGroupsActivity"></activity>
+        <activity android:name=".AddingGroupsActivity" />
+        <activity
+            android:name=".GroupInfoActivity"
+            android:label="@string/title_activity_group_info"></activity>
     </application>
 
 </manifest>

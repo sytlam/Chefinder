@@ -14,6 +14,13 @@
     <string name="group_add_textBox">Add Group Name Here</string>
     <string name="add_ingredient">Add</string>
     <string name="ingredient">Ingredient</string>
+    <string name="title_activity_group_info">Group Information</string>
+    <string name="title_members">Members</string>
+    <string name="title_ingredients_group">Ingredients</string>
+    <string name="title_recipes">Recipes</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

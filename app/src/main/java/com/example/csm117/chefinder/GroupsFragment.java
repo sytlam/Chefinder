@@ -189,6 +189,13 @@ public class GroupsFragment extends Fragment implements AdapterView.OnItemClickL
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         System.out.println("item " + i + " was clicked");
+        System.out.println(listAdapater.getItem(i));
+
+        Intent intent = new Intent(getActivity(), GroupInfoActivity.class);
+
+        intent.putExtra("GROUP_NAME", listAdapater.getItem(i));
+        startActivity(intent);
+
     }
 
     public void setUpDB() {
