@@ -154,6 +154,9 @@ public class MainActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             System.out.println("task is successful");
                             FirebaseUser user = mAuth.getCurrentUser();
+                            DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("users");
+                            //db.getReference(userId);
+                            dbRef.child(user.getUid()).child("name").setValue(user.getDisplayName());
                             System.out.println("facebook access user: " + user);
                             updateUI(user);
                         } else {

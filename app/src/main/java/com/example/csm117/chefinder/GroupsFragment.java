@@ -7,12 +7,23 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,8 +50,10 @@ public class GroupsFragment extends Fragment implements AdapterView.OnItemClickL
     private OnFragmentInteractionListener mListener;
     private View v;
     private static final int REQUEST_CODE_ADD_GROUP = 1;
+    private FirebaseUser user;
+    private FirebaseDatabase db;
     ListView listView;
-    ArrayList<String> groupsList;
+    //ArrayList<String> groupsList;
     ArrayAdapter<String> listAdapater;
 
 
@@ -69,10 +82,6 @@ public class GroupsFragment extends Fragment implements AdapterView.OnItemClickL
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        groupsList = new ArrayList<String>();
-        String[] groupNames = {};
-        groupsList.addAll(Arrays.asList(groupNames));
-        listAdapater = new ArrayAdapter<String>(getActivity(),R.layout.group_row,groupsList);
 //        if (getArguments() != null) {
 //            mParam1 = getArguments().getString(ARG_PARAM1);
 //            mParam2 = getArguments().getString(ARG_PARAM2);
@@ -83,6 +92,12 @@ public class GroupsFragment extends Fragment implements AdapterView.OnItemClickL
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        //groupsList = new ArrayList<String>();
+        //String[] groupNames = {};
+        //groupsList.addAll(Arrays.asList(groupNames));
+        listAdapater = new ArrayAdapter<String>(getActivity(),R.layout.group_row, new ArrayList<String>());
+        user = FirebaseAuth.getInstance().getCurrentUser();
+
         v = inflater.inflate(R.layout.fragment_groups, container, false);
         FloatingActionButton b = v.findViewById(R.id.addGroupsButton);
         b.setOnClickListener(new View.OnClickListener() {
@@ -92,6 +107,24 @@ public class GroupsFragment extends Fragment implements AdapterView.OnItemClickL
                 goToAddGroupActivity();
             }
         });
+
+        if (user != null) {
+            db = FirebaseDatabase.getInstance();
+            setUpDB();
+
+            listView = v.findViewById(R.id.groupList);
+            listView.setAdapter(listAdapater);
+            listView.setOnItemClickListener(this);
+        }
+        else {
+            Toast msg = Toast.makeText(getActivity(),"You must be signed in with Facebook to view/add groups",
+                    Toast.LENGTH_LONG);
+            TextView txt = (TextView) msg.getView().findViewById(android.R.id.message);
+            if (txt != null) {
+                txt.setGravity(Gravity.CENTER);
+            }
+            msg.show();
+        }
 
         return v;
     }
@@ -125,7 +158,7 @@ public class GroupsFragment extends Fragment implements AdapterView.OnItemClickL
         if (REQUEST_CODE_ADD_GROUP == requestCode) {
             if (Activity.RESULT_OK == resultCode) {
                 final String groupName = data.getStringExtra(AddingGroupsActivity.EXTRA_GROUP_NAME);
-                addGroupToListView(groupName);
+                //addGroupToListView(groupName);
             }
         }
         else {
@@ -136,7 +169,6 @@ public class GroupsFragment extends Fragment implements AdapterView.OnItemClickL
     private void goToAddGroupActivity() {
         Intent i = new Intent(getActivity(),AddingGroupsActivity.class);
         startActivityForResult(i,REQUEST_CODE_ADD_GROUP);
-
     }
 
 
@@ -157,6 +189,33 @@ public class GroupsFragment extends Fragment implements AdapterView.OnItemClickL
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         System.out.println("item " + i + " was clicked");
+    }
+
+    public void setUpDB() {
+        DatabaseReference dbRef = db.getReference("users");//db.getReference(user.getUid());
+        dbRef.child(user.getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                listAdapater.clear();
+                for (DataSnapshot eventSnapshot : dataSnapshot.child("groups").getChildren()) {
+                    System.out.println("data change");
+                    String val = eventSnapshot.getValue(String.class);
+                    System.out.println(val);
+                    listAdapater.add(val);
+                }
+
+                /*
+                for (int i = 0; i < ingredients.size(); i++)
+                    System.out.println(ingredients.get(i));
+                    */
+                listAdapater.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("database error!!" + databaseError);
+            }
+        });
     }
 
 
