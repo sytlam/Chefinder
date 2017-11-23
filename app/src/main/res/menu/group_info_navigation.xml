@@ -4,12 +4,12 @@
     <item
         android:id="@+id/navigation_members"
         android:icon="@android:drawable/ic_menu_info_details"
-        android:title="@string/title_members" />
+        android:title="@string/nav_members" />
 
     <item
         android:id="@+id/navigation_ingredients_group"
         android:icon="@android:drawable/ic_menu_agenda"
-        android:title="@string/title_ingredients_group" />
+        android:title="@string/nav_group_ingredients" />
 
     <item
         android:id="@+id/navigation_recipes"

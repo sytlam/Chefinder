@@ -28,14 +28,13 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link MembersFragment.OnFragmentInteractionListener} interface
+ * {@link IngredientsGroupFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link MembersFragment#newInstance} factory method to
+ * Use the {@link IngredientsGroupFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MembersFragment extends Fragment {
+public class IngredientsGroupFragment extends Fragment {
 
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String GROUP_NAME = "default group name";
 
     private String groupName;
@@ -43,10 +42,10 @@ public class MembersFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
     private FirebaseUser user;
     private FirebaseDatabase db;
-    private ListView list;
     private ArrayAdapter<String> itemsAdapter;
+    private ListView list;
 
-    public MembersFragment() {
+    public IngredientsGroupFragment() {
         // Required empty public constructor
     }
 
@@ -56,10 +55,10 @@ public class MembersFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment MembersFragment.
+     * @return A new instance of fragment IngredientsGroupFragment.
      */
-    public static MembersFragment newInstance(String name) {
-        MembersFragment fragment = new MembersFragment();
+    public static IngredientsGroupFragment newInstance(String name) {
+        IngredientsGroupFragment fragment = new IngredientsGroupFragment();
         Bundle args = new Bundle();
         args.putString(GROUP_NAME, name);
         fragment.setArguments(args);
@@ -71,32 +70,30 @@ public class MembersFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             groupName = getArguments().getString(GROUP_NAME);
-            System.out.println("members fragment group name is " + groupName);
         }
-        getActivity().setTitle(R.string.title_members);
+        getActivity().setTitle(R.string.title_ingredients_group);
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_members, container, false);
+        View v = inflater.inflate(R.layout.fragment_ingredients_group, container, false);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
-        System.out.println(user);
 
         if (user != null) {
             db = FirebaseDatabase.getInstance();
             setUpDB();
 
-            list = (ListView) v.findViewById(R.id.members_list);
+            list = (ListView) v.findViewById(R.id.list_ingredients_group);
             //list.setOnItemClickListener(this);
-            itemsAdapter =
-                    new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, new ArrayList<String>());
+            itemsAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, new ArrayList<String>());
             list.setAdapter(itemsAdapter);
         }
         else {
-            Toast msg = Toast.makeText(getActivity(),"You must be signed in with Facebook to view/add group members",
+            Toast msg = Toast.makeText(getActivity(),"You must be signed in with Facebook to view ingredients",
                     Toast.LENGTH_LONG);
             TextView txt = (TextView) msg.getView().findViewById(android.R.id.message);
             if (txt != null) {
@@ -139,17 +136,17 @@ public class MembersFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 itemsAdapter.clear();
                 for (DataSnapshot eventSnapshot : dataSnapshot.child("members").getChildren()) {
-
                     DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users");
 
-                    Query query = ref.child(user.getUid() + "/name");
+                    Query query = ref.child(user.getUid() + "/ingredients");
                     query.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {
                                 // dataSnapshot is the "issue" node with all children with id 0
-                                System.out.println(dataSnapshot.getValue());
-                                itemsAdapter.add((String)dataSnapshot.getValue());
+                                for (DataSnapshot issue : dataSnapshot.getChildren()) {
+                                    itemsAdapter.add((String)issue.getValue());
+                                }
                             }
                         }
 

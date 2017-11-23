@@ -10,7 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-public class GroupInfoActivity extends AppCompatActivity implements MembersFragment.OnFragmentInteractionListener {
+public class GroupInfoActivity extends AppCompatActivity implements MembersFragment.OnFragmentInteractionListener, IngredientsGroupFragment.OnFragmentInteractionListener {
 
     private String groupName;
 
@@ -26,6 +26,7 @@ public class GroupInfoActivity extends AppCompatActivity implements MembersFragm
                     selectedFragment = MembersFragment.newInstance(groupName);
                     break;
                 case R.id.navigation_ingredients_group:
+                    selectedFragment = IngredientsGroupFragment.newInstance(groupName);
                     break;
                 case R.id.navigation_recipes:
                     break;
@@ -48,7 +49,7 @@ public class GroupInfoActivity extends AppCompatActivity implements MembersFragm
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.group_info_nav);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        setTitle(R.string.title_activity_group_info);
+        setTitle(R.string.title_members);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.frame_layout, MembersFragment.newInstance(groupName));
