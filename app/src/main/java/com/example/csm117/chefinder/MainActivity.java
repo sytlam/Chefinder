@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
             public void onSuccess(LoginResult loginResult) {
                 System.out.println("login success: " + loginResult);
                 handleFacebookAccessToken(loginResult.getAccessToken());
-                getFriendList(loginResult.getAccessToken());
+                //getFriendList(loginResult.getAccessToken());
             }
 
             @Override
@@ -117,10 +117,34 @@ public class MainActivity extends AppCompatActivity {
                         } catch(JSONException e)    {
                             e.printStackTrace();
                         }
+                        DatabaseReference dbRef= FirebaseDatabase.getInstance().getReference("users");
+                        dbRef.child(mAuth.getCurrentUser().getUid()).child("friends").setValue(null);
                         for (int i = 0; i < friendList.length(); i++)   {
                             try {
                                 JSONObject amigo = friendList.getJSONObject(i);
                                 System.out.println("name of friend is: " + amigo.getString("name"));
+                                String name = amigo.getString("name");
+                                dbRef.child(mAuth.getCurrentUser().getUid()).child("friends").push().setValue(name);
+                                /* WIP
+                                dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        for (DataSnapshot item_snapshot : dataSnapshot.getChildren()) {
+                                            if (item_snapshot.child("name").getValue().equals(name)) {
+                                                dbRef.child(mAuth.getCurrentUser().getUid() + "/friends").
+                                                        push().setValue(item_snapshot.getKey());
+                                                System.out.println(item_snapshot.getKey());
+                                                System.out.println(mAuth.getCurrentUser());
+                                            }
+                                        }
+                                    }
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
+                                */
+
                             } catch(JSONException e)    {
                                 e.printStackTrace();
                             }
@@ -159,6 +183,7 @@ public class MainActivity extends AppCompatActivity {
                             dbRef.child(user.getUid()).child("name").setValue(user.getDisplayName());
                             System.out.println("facebook access user: " + user);
                             updateUI(user);
+                            getFriendList(AccessToken.getCurrentAccessToken());
                         } else {
                             // If sign in fails, display a message to the user.
                             Toast.makeText(MainActivity.this, "Authentication failed.",
