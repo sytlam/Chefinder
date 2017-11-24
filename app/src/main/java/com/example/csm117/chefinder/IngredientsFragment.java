@@ -193,6 +193,7 @@ public class IngredientsFragment extends Fragment implements View.OnClickListene
                 for (DataSnapshot eventSnapshot : dataSnapshot.child("ingredients").getChildren()) {
                     System.out.println("data change");
                     String val = eventSnapshot.getValue(String.class);
+
                     System.out.println(val);
                     itemsAdapter.add(val);
                 }

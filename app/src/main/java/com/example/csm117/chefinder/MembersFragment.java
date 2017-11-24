@@ -1,8 +1,10 @@
 package com.example.csm117.chefinder;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -45,6 +47,7 @@ public class MembersFragment extends Fragment {
     private FirebaseDatabase db;
     private ListView list;
     private ArrayAdapter<String> itemsAdapter;
+    private static final int REQUEST_CODE_ADD_MEMBERS = 1;
 
     public MembersFragment() {
         // Required empty public constructor
@@ -81,6 +84,15 @@ public class MembersFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_members, container, false);
+
+        FloatingActionButton b = v.findViewById(R.id.addMembersButton);
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("Button Clicked");
+                goToAddMemberActivity();
+            }
+        });
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         System.out.println(user);
@@ -168,7 +180,14 @@ public class MembersFragment extends Fragment {
                 System.out.println("database error!!" + databaseError);
             }
         });
+
     }
+
+    public void goToAddMemberActivity(){
+        Intent i = new Intent(getActivity(),AddingMembersActivity.class);
+        startActivityForResult(i,REQUEST_CODE_ADD_MEMBERS);
+    }
+
 
     /**
      * This interface must be implemented by activities that contain this

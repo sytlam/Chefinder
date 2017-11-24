@@ -45,7 +45,8 @@
         <activity android:name=".AddingGroupsActivity" />
         <activity
             android:name=".GroupInfoActivity"
-            android:label="@string/title_activity_group_info"></activity>
+            android:label="@string/title_activity_group_info" />
+        <activity android:name=".AddingMembersActivity"></activity>
     </application>
 
 </manifest>
