@@ -26,7 +26,7 @@ import java.util.List;
 
 public class AddingMembersActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
-    public static final String EXTRA_NEW_MEMBER_LIST = "com.my.application.AddingMembersActivityActivity.NEW_MEMBER_LIST";
+    private static final String EXTRA_NEW_MEMBER_LIST = "com.my.application.AddingMembersActivityActivity.NEW_MEMBER_LIST";
     private Button b;
     private FirebaseUser user;
     private FirebaseDatabase db;
@@ -71,16 +71,19 @@ public class AddingMembersActivity extends AppCompatActivity implements AdapterV
     private void addMembers() {
         ArrayList<String>  l = new ArrayList<String>();
         for (int i=0;i<itemsAdapter.getCount();i++){
-
-            CheckedTextView cv = (CheckedTextView)itemsAdapter.getView(i,null,lv);
+            System.out.println("In addmember for loop");
+            CheckedTextView cv = (CheckedTextView)itemsAdapter.getView(i,null,null);
+            System.out.println("Name of textview " + cv.getText() + " " + cv.isChecked());
             if (cv.isChecked()) {
                 l.add(cv.getText().toString());
-
+                System.out.println(cv.getText().toString() + "is checked.");
             }
         }
+        //l contains checked items
+
 
         Intent i = new Intent();
-        i.putExtra(EXTRA_NEW_MEMBER_LIST,l.toString());
+        i.putStringArrayListExtra(EXTRA_NEW_MEMBER_LIST,l);
         setResult(RESULT_OK,i);
         finish();
     }
@@ -119,6 +122,7 @@ public class AddingMembersActivity extends AppCompatActivity implements AdapterV
     public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
         CheckedTextView v = (CheckedTextView) view;
         v.setChecked(!v.isChecked());
+        System.out.println(v.getText() + " got checked: " + v.isChecked());
         v.setCompoundDrawablesWithIntrinsicBounds(v.isChecked() ? android.R.drawable.checkbox_on_background : android.R.drawable.checkbox_off_background,0,0,0);
 
     }
