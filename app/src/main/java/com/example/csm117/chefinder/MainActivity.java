@@ -23,8 +23,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.facebook.FacebookSdk;
@@ -33,8 +31,6 @@ import com.facebook.appevents.AppEventsLogger;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
     private CallbackManager callbackManager;
     private FirebaseAuth mAuth;
     private AccessTokenTracker tracker;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,15 +117,15 @@ public class MainActivity extends AppCompatActivity {
                         } catch(JSONException e)    {
                             e.printStackTrace();
                         }
-                        final DatabaseReference dbRef= FirebaseDatabase.getInstance().getReference("users");
-                        dbRef.child(mAuth.getCurrentUser().getUid()).child("friends").setValue(null);
+                        //DatabaseReference dbRef= FirebaseDatabase.getInstance().getReference("users");
+                        //dbRef.child(mAuth.getCurrentUser().getUid()).child("friends").setValue(null);
                         for (int i = 0; i < friendList.length(); i++)   {
                             try {
                                 JSONObject amigo = friendList.getJSONObject(i);
                                 System.out.println("name of friend is: " + amigo.getString("name"));
-                                final String name = amigo.getString("name");
+                                String name = amigo.getString("name");
+                                /*
                                 dbRef.child(mAuth.getCurrentUser().getUid()).child("friends").push().setValue(name);
-
                                 dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -148,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
 
                                     }
                                 });
-
+                                */
 
                             } catch(JSONException e)    {
                                 e.printStackTrace();
@@ -186,8 +181,6 @@ public class MainActivity extends AppCompatActivity {
                             DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("users");
                             //db.getReference(userId);
                             dbRef.child(user.getUid()).child("name").setValue(user.getDisplayName());
-                            FirebaseInstanceId instanceID = FirebaseInstanceId.getInstance();
-                            dbRef.child(user.getUid()).child("instanceID").setValue(instanceID.getToken());
                             System.out.println("facebook access user: " + user);
                             updateUI(user);
                             getFriendList(AccessToken.getCurrentAccessToken());
