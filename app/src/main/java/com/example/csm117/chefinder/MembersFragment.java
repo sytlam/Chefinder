@@ -1,8 +1,12 @@
 package com.example.csm117.chefinder;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -22,6 +26,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 
@@ -37,7 +44,7 @@ public class MembersFragment extends Fragment {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String GROUP_NAME = "default group name";
-
+    private static final String EXTRA_NEW_MEMBER_LIST = "com.my.application.AddingMembersActivityActivity.NEW_MEMBER_LIST";
     private String groupName;
 
     private OnFragmentInteractionListener mListener;
@@ -45,6 +52,7 @@ public class MembersFragment extends Fragment {
     private FirebaseDatabase db;
     private ListView list;
     private ArrayAdapter<String> itemsAdapter;
+    private static final int REQUEST_CODE_ADD_MEMBERS = 1;
 
     public MembersFragment() {
         // Required empty public constructor
@@ -54,8 +62,8 @@ public class MembersFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * //@param param1 Parameter 1.
+     * //@param param2 Parameter 2.
      * @return A new instance of fragment MembersFragment.
      */
     public static MembersFragment newInstance(String name) {
@@ -81,6 +89,15 @@ public class MembersFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_members, container, false);
+
+        FloatingActionButton b = v.findViewById(R.id.addMembersButton);
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("Button Clicked");
+                goToAddMemberActivity();
+            }
+        });
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         System.out.println(user);
@@ -167,6 +184,58 @@ public class MembersFragment extends Fragment {
                 System.out.println("database error!!" + databaseError);
             }
         });
+
+    }
+
+    public void goToAddMemberActivity(){
+        Intent i = new Intent(getActivity(),AddingMembersActivity.class);
+        startActivityForResult(i,REQUEST_CODE_ADD_MEMBERS);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (REQUEST_CODE_ADD_MEMBERS == requestCode) {
+            if (Activity.RESULT_OK == resultCode) {
+                ArrayList<String> newMembersList = data.getStringArrayListExtra(EXTRA_NEW_MEMBER_LIST);
+                addMembersToDB(newMembersList);
+            }
+        }
+        else {
+            super.onActivityResult(requestCode,resultCode,data);
+        }
+    }
+
+    private void addMembersToDB(ArrayList<String> l){
+        //for each member
+        //query members key
+        //add this group to their groups
+        //query group name and add the new member
+        //add the new member to the list view as well
+        final ArrayList<String> userIds = new ArrayList<String>();
+        final DatabaseReference dbRef= FirebaseDatabase.getInstance().getReference("users");
+        for (int i = 0; i < l.size(); i++)   {
+            final String name = l.get(i);
+            dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot item_snapshot : dataSnapshot.getChildren()) {
+                        if (item_snapshot.child("name").getValue().equals(name)) {
+                            userIds.add(item_snapshot.getKey());
+                            dbRef.child(item_snapshot.getKey() + "/groups").push().setValue(groupName);
+                        }
+                    }
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+
+        }
+
+
+
     }
 
     /**

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<CheckedTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/friendsListRow"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:drawableLeft="@android:drawable/checkbox_off_background"
+    android:checkMark="@null"
+    android:padding="10dp"
+    android:textSize="16sp" />
