@@ -15,12 +15,7 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -28,12 +23,12 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link IngredientsGroupFragment.OnFragmentInteractionListener} interface
+ * {@link RecipesFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link IngredientsGroupFragment#newInstance} factory method to
+ * Use the {@link RecipesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class IngredientsGroupFragment extends Fragment {
+public class RecipesFragment extends Fragment {
 
     private static final String GROUP_NAME = "default group name";
 
@@ -42,10 +37,10 @@ public class IngredientsGroupFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
     private FirebaseUser user;
     private FirebaseDatabase db;
-    private ArrayAdapter<String> itemsAdapter;
     private ListView list;
+    private ArrayAdapter<String> itemsAdapter;
 
-    public IngredientsGroupFragment() {
+    public RecipesFragment() {
         // Required empty public constructor
     }
 
@@ -55,10 +50,11 @@ public class IngredientsGroupFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment IngredientsGroupFragment.
+     * @return A new instance of fragment RecipesFragment.
      */
-    public static IngredientsGroupFragment newInstance(String name) {
-        IngredientsGroupFragment fragment = new IngredientsGroupFragment();
+    // TODO: Rename and change types and number of parameters
+    public static RecipesFragment newInstance(String name) {
+        RecipesFragment fragment = new RecipesFragment();
         Bundle args = new Bundle();
         args.putString(GROUP_NAME, name);
         fragment.setArguments(args);
@@ -71,29 +67,30 @@ public class IngredientsGroupFragment extends Fragment {
         if (getArguments() != null) {
             groupName = getArguments().getString(GROUP_NAME);
         }
-        getActivity().setTitle(R.string.title_ingredients_group);
-
+        getActivity().setTitle(R.string.title_recipes);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_ingredients_group, container, false);
+        View v = inflater.inflate(R.layout.fragment_recipes, container, false);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
+        System.out.println(user);
 
         if (user != null) {
             db = FirebaseDatabase.getInstance();
-            setUpDB();
+            //setUpDB();
 
-            list = (ListView) v.findViewById(R.id.list_ingredients_group);
+            list = (ListView) v.findViewById(R.id.members_list);
             //list.setOnItemClickListener(this);
-            itemsAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, new ArrayList<String>());
+            itemsAdapter =
+                    new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, new ArrayList<String>());
             list.setAdapter(itemsAdapter);
         }
         else {
-            Toast msg = Toast.makeText(getActivity(),"You must be signed in with Facebook to view ingredients",
+            Toast msg = Toast.makeText(getActivity(),"You must be signed in with Facebook to view/add group members",
                     Toast.LENGTH_LONG);
             TextView txt = (TextView) msg.getView().findViewById(android.R.id.message);
             if (txt != null) {
@@ -127,44 +124,6 @@ public class IngredientsGroupFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-
-    public void setUpDB() {
-        DatabaseReference dbRef = db.getReference("groups");//db.getReference(user.getUid());
-        dbRef.child(groupName).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                itemsAdapter.clear();
-                for (DataSnapshot eventSnapshot : dataSnapshot.child("members").getChildren()) {
-                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users");
-
-                    Query query = ref.child(eventSnapshot.getValue() + "/ingredients");
-                    query.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.exists()) {
-                                // dataSnapshot is the "issue" node with all children with id 0
-                                for (DataSnapshot issue : dataSnapshot.getChildren()) {
-                                    itemsAdapter.add((String)issue.getValue());
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-                }
-
-                itemsAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                System.out.println("database error!!" + databaseError);
-            }
-        });
     }
 
     /**

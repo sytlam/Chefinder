@@ -139,11 +139,10 @@ public class MembersFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 itemsAdapter.clear();
                 for (DataSnapshot eventSnapshot : dataSnapshot.child("members").getChildren()) {
-
                     DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users");
 
-                    Query query = ref.child(user.getUid() + "/name");
-                    query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    Query query = ref.child(eventSnapshot.getValue() + "/name");
+                    query.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {
