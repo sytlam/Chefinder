@@ -1,5 +1,6 @@
 package com.example.csm117.chefinder;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,7 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.GridView;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,11 +37,32 @@ public class RecipesFragment extends Fragment {
 
     private String groupName;
 
+    private GridView gridView;
+    private ArrayAdapter<String> itemsAdapter;
     private OnFragmentInteractionListener mListener;
     private FirebaseUser user;
     private FirebaseDatabase db;
-    private ListView list;
-    private ArrayAdapter<String> itemsAdapter;
+
+    // references to our images
+    private int[] mThumbIds = {
+            R.drawable.sample_2, R.drawable.sample_3,
+            R.drawable.sample_4, R.drawable.sample_5,
+            R.drawable.sample_6, R.drawable.sample_7,
+            R.drawable.sample_0, R.drawable.sample_1,
+            R.drawable.sample_2, R.drawable.sample_3,
+            R.drawable.sample_4, R.drawable.sample_5,
+            R.drawable.sample_6, R.drawable.sample_7,
+            R.drawable.sample_0, R.drawable.sample_1,
+            R.drawable.sample_2, R.drawable.sample_3,
+            R.drawable.sample_4, R.drawable.sample_5,
+            R.drawable.sample_6, R.drawable.sample_7
+    };
+
+    private String[] mNames = {
+        "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo",
+            "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo",
+            "doggo", "doggo"
+    };
 
     public RecipesFragment() {
         // Required empty public constructor
@@ -68,13 +92,14 @@ public class RecipesFragment extends Fragment {
             groupName = getArguments().getString(GROUP_NAME);
         }
         getActivity().setTitle(R.string.title_recipes);
+        //setContentView(R.layout.fragment_recipes);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public GridView onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_recipes, container, false);
+        //View v = inflater.inflate(R.layout.fragment_recipes, container, false);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         System.out.println(user);
@@ -83,11 +108,20 @@ public class RecipesFragment extends Fragment {
             db = FirebaseDatabase.getInstance();
             //setUpDB();
 
-            list = (ListView) v.findViewById(R.id.members_list);
-            //list.setOnItemClickListener(this);
-            itemsAdapter =
-                    new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, new ArrayList<String>());
-            list.setAdapter(itemsAdapter);
+            gridView = (GridView) gridView.findViewById(R.id.customgrid);
+            gridView.setAdapter(new ImageAdapter(this, mNames, mThumbIds));
+//            gridView = (GridView) v.findViewById(R.id.gridview);
+//            //itemsAdapter =
+//                    new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, new ArrayList<String>());
+//            gridView.setAdapter(new ImageAdapter(getActivity()));
+//
+//            gridView.setOnItemClickListener(new OnItemClickListener() {
+//                public void onItemClick(AdapterView<?> parent, View v,
+//                                        int position, long id) {
+//                    Toast.makeText(getActivity(), "" + position,
+//                            Toast.LENGTH_SHORT).show();
+//                }
+//            });
         }
         else {
             Toast msg = Toast.makeText(getActivity(),"You must be signed in with Facebook to view/add group members",
@@ -99,7 +133,7 @@ public class RecipesFragment extends Fragment {
             msg.show();
         }
 
-        return v;
+        return gridView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

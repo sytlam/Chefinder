@@ -1,12 +1,21 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.csm117.chefinder.RecipesFragment">
+    android:orientation="vertical" >
 
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/layout_recipes"
+    <GridView
+        android:id="@+id/customgrid"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-</FrameLayout>
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/texts"
+        android:numColumns="2" />
+
+    <TextView
+        android:id="@+id/texts"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="List of Recipes"
+        android:textSize="25dp"
+        android:textAlignment="center"
+        android:layout_marginTop="2dp"/>
+</RelativeLayout>
