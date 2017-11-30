@@ -31,6 +31,7 @@ import com.facebook.appevents.AppEventsLogger;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -181,6 +182,8 @@ public class MainActivity extends AppCompatActivity {
                             DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("users");
                             //db.getReference(userId);
                             dbRef.child(user.getUid()).child("name").setValue(user.getDisplayName());
+                            FirebaseInstanceId instanceID = FirebaseInstanceId.getInstance();
+                            dbRef.child(user.getUid()).child("instanceID").setValue(instanceID.getToken());
                             System.out.println("facebook access user: " + user);
                             updateUI(user);
                             getFriendList(AccessToken.getCurrentAccessToken());
