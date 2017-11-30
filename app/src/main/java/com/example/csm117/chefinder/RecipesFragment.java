@@ -96,10 +96,10 @@ public class RecipesFragment extends Fragment {
     }
 
     @Override
-    public GridView onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        //View v = inflater.inflate(R.layout.fragment_recipes, container, false);
+        View v = inflater.inflate(R.layout.fragment_recipes, container, false);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         System.out.println(user);
@@ -108,7 +108,7 @@ public class RecipesFragment extends Fragment {
             db = FirebaseDatabase.getInstance();
             //setUpDB();
 
-            gridView = (GridView) gridView.findViewById(R.id.customgrid);
+            gridView = (GridView) v.findViewById(R.id.customgrid);
             gridView.setAdapter(new ImageAdapter(this, mNames, mThumbIds));
 //            gridView = (GridView) v.findViewById(R.id.gridview);
 //            //itemsAdapter =
@@ -133,7 +133,7 @@ public class RecipesFragment extends Fragment {
             msg.show();
         }
 
-        return gridView;
+        return v;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
