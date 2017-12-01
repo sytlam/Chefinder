@@ -233,7 +233,8 @@ public class MembersFragment extends Fragment {
                     for (DataSnapshot item_snapshot : dataSnapshot.getChildren()) {
                         if (item_snapshot.child("name").getValue().equals(name)) {
                             userIds.add(item_snapshot.getKey());
-                            sendNotification(item_snapshot.child("instanceID").getValue().toString());
+                            DatabaseReference dbRef3 = dbRef.child("notifications").push();
+                            dbRef3.child("message").push().setValue(name + " added you to " + groupName);
                             dbRef.child(item_snapshot.getKey() + "/groups").push().setValue(groupName);
                             dbRef2.child(groupName + "/members").push().setValue(item_snapshot.getKey());
                         }
@@ -244,46 +245,11 @@ public class MembersFragment extends Fragment {
 
                 }
             });
-
-
         }
-
-
-
     }
 
-    public static final MediaType JSON
-                = MediaType.parse("application/json; charset=utf-8");
-    @SuppressLint("StaticFieldLeak")
-    private void sendNotification(final String reg_token) {
-            new AsyncTask<Void,Void,Void>(){
-                @Override
-                protected Void doInBackground(Void... params) {
-                    try {
-                        OkHttpClient client = new OkHttpClient();
-                        JSONObject json=new JSONObject();
-                        JSONObject dataJson=new JSONObject();
-                        dataJson.put("body","You were added to " + groupName);
-                        dataJson.put("title","You've been added to a group!");
-                        json.put("notification",dataJson);
-                        System.out.println("Sending notification to: " + reg_token);
-                        json.put("to",reg_token);
-                        RequestBody body = RequestBody.create(JSON, json.toString());
-                        Request request = new Request.Builder()
-                                .header("Authorization","key="+"AIzaSyDmV0UuVIPmtxgqRlyOvhbzglDuf4TM994")
-                                .url("https://fcm.googleapis.com/fcm/send")
-                                .post(body)
-                                .build();
-                        Response response = client.newCall(request).execute();
-                        String finalResponse = response.body().string();
-                    }catch (Exception e){
-                        //Log.d(TAG,e+"");
-                    }
-                    return null;
-                }
-            }.execute();
 
-        }
+
 
 
     /**
