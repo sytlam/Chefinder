@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onError(FacebookException exception) {
-                System.out.println("login error");
+                System.out.println("login error" + exception);
                 updateUI(null);
             }
         });

@@ -18,7 +18,12 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -38,7 +43,7 @@ public class RecipesFragment extends Fragment {
     private String groupName;
 
     private GridView gridView;
-    private ArrayAdapter<String> itemsAdapter;
+    private ArrayList<String> groupIng = new ArrayList<String>();;
     private OnFragmentInteractionListener mListener;
     private FirebaseUser user;
     private FirebaseDatabase db;
@@ -106,7 +111,7 @@ public class RecipesFragment extends Fragment {
 
         if (user != null) {
             db = FirebaseDatabase.getInstance();
-            //setUpDB();
+            setUpDB();
 
             gridView = (GridView) v.findViewById(R.id.customgrid);
             gridView.setAdapter(new ImageAdapter(this, mNames, mThumbIds));
@@ -158,6 +163,53 @@ public class RecipesFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    public void setUpDB() {
+        DatabaseReference dbRef = db.getReference("groups");//db.getReference(user.getUid());
+        dbRef.child(groupName).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                groupIng.clear();
+                for (DataSnapshot eventSnapshot : dataSnapshot.child("members").getChildren()) {
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users");
+
+                    Query query = ref.child(eventSnapshot.getValue() + "/ingredients");
+                    query.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                // dataSnapshot is the "issue" node with all children with id 0
+                                for (DataSnapshot issue : dataSnapshot.getChildren()) {
+                                    groupIng.add((String)issue.getValue());
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+
+                //itemsAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("database error!!" + databaseError);
+            }
+        });
+
+        String queryString = "http://food2fork.com/api/search?key={a53266eff3482baeae56e93836fcc011}&q=";
+        for (int i = 0; i < groupIng.size(); i++) {
+            String currentString = groupIng.get(i);
+            currentString += "%2C+";
+            queryString += currentString;
+        }
+
+        System.out.println(queryString);
     }
 
     /**

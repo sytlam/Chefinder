@@ -9,6 +9,9 @@
         android:id="@+id/images"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:maxHeight="250px"
+        android:maxWidth="100px"
+        android:adjustViewBounds="true"
         android:src="@mipmap/ic_launcher" />
 
     <TextView
