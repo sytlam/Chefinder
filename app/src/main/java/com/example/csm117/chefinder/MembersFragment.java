@@ -1,13 +1,13 @@
 package com.example.csm117.chefinder;
 
-import android.annotation.SuppressLint;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
+
 import android.os.Bundle;
-import android.provider.ContactsContract;
+
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
@@ -28,10 +28,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceIdService;
-
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -233,8 +229,8 @@ public class MembersFragment extends Fragment {
                     for (DataSnapshot item_snapshot : dataSnapshot.getChildren()) {
                         if (item_snapshot.child("name").getValue().equals(name)) {
                             userIds.add(item_snapshot.getKey());
-                            DatabaseReference dbRef3 = dbRef.child("notifications").push();
-                            dbRef3.child("message").push().setValue(name + " added you to " + groupName);
+                            DatabaseReference dbRef3 = dbRef.child(item_snapshot.getKey() +"/notifications");
+                            dbRef3.child("message").push().setValue(user.getDisplayName() + " added you to " + groupName);
                             dbRef.child(item_snapshot.getKey() + "/groups").push().setValue(groupName);
                             dbRef2.child(groupName + "/members").push().setValue(item_snapshot.getKey());
                         }

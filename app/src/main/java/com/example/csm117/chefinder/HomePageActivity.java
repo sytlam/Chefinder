@@ -31,7 +31,7 @@ public class HomePageActivity extends AppCompatActivity implements GroupsFragmen
                 case R.id.navigation_notifications:
                     setTitle(R.string.title_notifications);
                     // temp to avoid crashes
-                    selectedFragment = IngredientsFragment.newInstance();
+                    selectedFragment = NotificationsFragment.newInstance();
                     break;
                 case R.id.navigation_invitation:
                     setTitle(R.string.title_invite);
