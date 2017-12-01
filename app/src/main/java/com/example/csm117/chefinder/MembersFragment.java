@@ -1,9 +1,11 @@
 package com.example.csm117.chefinder;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
@@ -25,11 +27,19 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceIdService;
+
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 
 /**
@@ -159,7 +169,7 @@ public class MembersFragment extends Fragment {
 
                     DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users");
 
-                    Query query = ref.child(user.getUid() + "/name");
+                    Query query = ref.child(eventSnapshot.getValue() + "/name");
                     query.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -212,8 +222,10 @@ public class MembersFragment extends Fragment {
         //add this group to their groups
         //query group name and add the new member
         //add the new member to the list view as well
+
         final ArrayList<String> userIds = new ArrayList<String>();
         final DatabaseReference dbRef= FirebaseDatabase.getInstance().getReference("users");
+        final DatabaseReference dbRef2 = FirebaseDatabase.getInstance().getReference("groups");
         for (int i = 0; i < l.size(); i++)   {
             final String name = l.get(i);
             dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -222,7 +234,9 @@ public class MembersFragment extends Fragment {
                     for (DataSnapshot item_snapshot : dataSnapshot.getChildren()) {
                         if (item_snapshot.child("name").getValue().equals(name)) {
                             userIds.add(item_snapshot.getKey());
+                            sendNotification(item_snapshot.child("instanceID").getValue().toString());
                             dbRef.child(item_snapshot.getKey() + "/groups").push().setValue(groupName);
+                            dbRef2.child(groupName + "/members").push().setValue(item_snapshot.getKey());
                         }
                     }
                 }
@@ -238,6 +252,40 @@ public class MembersFragment extends Fragment {
 
 
     }
+
+    public static final MediaType JSON
+                = MediaType.parse("application/json; charset=utf-8");
+    @SuppressLint("StaticFieldLeak")
+    private void sendNotification(final String reg_token) {
+            new AsyncTask<Void,Void,Void>(){
+                @Override
+                protected Void doInBackground(Void... params) {
+                    try {
+                        OkHttpClient client = new OkHttpClient();
+                        JSONObject json=new JSONObject();
+                        JSONObject dataJson=new JSONObject();
+                        dataJson.put("body","You were added to " + groupName);
+                        dataJson.put("title","You've been added to a group!");
+                        json.put("notification",dataJson);
+                        System.out.println("Sending notification to: " + reg_token);
+                        json.put("to",reg_token);
+                        RequestBody body = RequestBody.create(JSON, json.toString());
+                        Request request = new Request.Builder()
+                                .header("Authorization","key="+"AIzaSyDmV0UuVIPmtxgqRlyOvhbzglDuf4TM994")
+                                .url("https://fcm.googleapis.com/fcm/send")
+                                .post(body)
+                                .build();
+                        Response response = client.newCall(request).execute();
+                        String finalResponse = response.body().string();
+                    }catch (Exception e){
+                        //Log.d(TAG,e+"");
+                    }
+                    return null;
+                }
+            }.execute();
+
+        }
+
 
     /**
      * This interface must be implemented by activities that contain this

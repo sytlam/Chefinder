@@ -131,23 +131,23 @@ public class MainActivity extends AppCompatActivity {
                                 final String name = amigo.getString("name");
                                 dbRef.child(mAuth.getCurrentUser().getUid()).child("friends").push().setValue(name);
 
-                                dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        for (DataSnapshot item_snapshot : dataSnapshot.getChildren()) {
-                                            if (item_snapshot.child("name").getValue().equals(name)) {
-                                                dbRef.child(mAuth.getCurrentUser().getUid() + "/friends").
-                                                        push().setValue(item_snapshot.getKey());
-                                                System.out.println(item_snapshot.getKey());
-                                                System.out.println(mAuth.getCurrentUser());
-                                            }
-                                        }
-                                    }
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
-
-                                    }
-                                });
+//                                dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//                                    @Override
+//                                    public void onDataChange(DataSnapshot dataSnapshot) {
+//                                        for (DataSnapshot item_snapshot : dataSnapshot.getChildren()) {
+//                                            if (item_snapshot.child("name").getValue().equals(name)) {
+//                                                dbRef.child(mAuth.getCurrentUser().getUid() + "/friends").
+//                                                        push().setValue(item_snapshot.getKey());
+//                                                System.out.println(item_snapshot.getKey());
+//                                                System.out.println(mAuth.getCurrentUser());
+//                                            }
+//                                        }
+//                                    }
+//                                    @Override
+//                                    public void onCancelled(DatabaseError databaseError) {
+//
+//                                    }
+//                                });
 
 
                             } catch(JSONException e)    {
