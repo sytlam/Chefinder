@@ -1,5 +1,6 @@
 package com.example.csm117.chefinder;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,7 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.GridView;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,24 +31,45 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link IngredientsGroupFragment.OnFragmentInteractionListener} interface
+ * {@link RecipesFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link IngredientsGroupFragment#newInstance} factory method to
+ * Use the {@link RecipesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class IngredientsGroupFragment extends Fragment {
+public class RecipesFragment extends Fragment {
 
     private static final String GROUP_NAME = "default group name";
 
     private String groupName;
 
+    private GridView gridView;
+    private ArrayList<String> groupIng = new ArrayList<String>();;
     private OnFragmentInteractionListener mListener;
     private FirebaseUser user;
     private FirebaseDatabase db;
-    private ArrayAdapter<String> itemsAdapter;
-    private ListView list;
 
-    public IngredientsGroupFragment() {
+    // references to our images
+    private int[] mThumbIds = {
+            R.drawable.sample_2, R.drawable.sample_3,
+            R.drawable.sample_4, R.drawable.sample_5,
+            R.drawable.sample_6, R.drawable.sample_7,
+            R.drawable.sample_0, R.drawable.sample_1,
+            R.drawable.sample_2, R.drawable.sample_3,
+            R.drawable.sample_4, R.drawable.sample_5,
+            R.drawable.sample_6, R.drawable.sample_7,
+            R.drawable.sample_0, R.drawable.sample_1,
+            R.drawable.sample_2, R.drawable.sample_3,
+            R.drawable.sample_4, R.drawable.sample_5,
+            R.drawable.sample_6, R.drawable.sample_7
+    };
+
+    private String[] mNames = {
+        "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo",
+            "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo",
+            "doggo", "doggo"
+    };
+
+    public RecipesFragment() {
         // Required empty public constructor
     }
 
@@ -55,10 +79,11 @@ public class IngredientsGroupFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment IngredientsGroupFragment.
+     * @return A new instance of fragment RecipesFragment.
      */
-    public static IngredientsGroupFragment newInstance(String name) {
-        IngredientsGroupFragment fragment = new IngredientsGroupFragment();
+    // TODO: Rename and change types and number of parameters
+    public static RecipesFragment newInstance(String name) {
+        RecipesFragment fragment = new RecipesFragment();
         Bundle args = new Bundle();
         args.putString(GROUP_NAME, name);
         fragment.setArguments(args);
@@ -71,29 +96,40 @@ public class IngredientsGroupFragment extends Fragment {
         if (getArguments() != null) {
             groupName = getArguments().getString(GROUP_NAME);
         }
-        getActivity().setTitle(R.string.title_ingredients_group);
-
+        getActivity().setTitle(R.string.title_recipes);
+        //setContentView(R.layout.fragment_recipes);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_ingredients_group, container, false);
+        View v = inflater.inflate(R.layout.fragment_recipes, container, false);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
+        System.out.println(user);
 
         if (user != null) {
             db = FirebaseDatabase.getInstance();
             setUpDB();
 
-            list = (ListView) v.findViewById(R.id.list_ingredients_group);
-            //list.setOnItemClickListener(this);
-            itemsAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, new ArrayList<String>());
-            list.setAdapter(itemsAdapter);
+            gridView = (GridView) v.findViewById(R.id.customgrid);
+            gridView.setAdapter(new ImageAdapter(this, mNames, mThumbIds));
+//            gridView = (GridView) v.findViewById(R.id.gridview);
+//            //itemsAdapter =
+//                    new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, new ArrayList<String>());
+//            gridView.setAdapter(new ImageAdapter(getActivity()));
+//
+//            gridView.setOnItemClickListener(new OnItemClickListener() {
+//                public void onItemClick(AdapterView<?> parent, View v,
+//                                        int position, long id) {
+//                    Toast.makeText(getActivity(), "" + position,
+//                            Toast.LENGTH_SHORT).show();
+//                }
+//            });
         }
         else {
-            Toast msg = Toast.makeText(getActivity(),"You must be signed in with Facebook to view ingredients",
+            Toast msg = Toast.makeText(getActivity(),"You must be signed in with Facebook to view/add group members",
                     Toast.LENGTH_LONG);
             TextView txt = (TextView) msg.getView().findViewById(android.R.id.message);
             if (txt != null) {
@@ -134,7 +170,7 @@ public class IngredientsGroupFragment extends Fragment {
         dbRef.child(groupName).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                itemsAdapter.clear();
+                groupIng.clear();
                 for (DataSnapshot eventSnapshot : dataSnapshot.child("members").getChildren()) {
                     DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users");
 
@@ -145,7 +181,7 @@ public class IngredientsGroupFragment extends Fragment {
                             if (dataSnapshot.exists()) {
                                 // dataSnapshot is the "issue" node with all children with id 0
                                 for (DataSnapshot issue : dataSnapshot.getChildren()) {
-                                    itemsAdapter.add((String)issue.getValue());
+                                    groupIng.add((String)issue.getValue());
                                 }
                             }
                         }
@@ -157,7 +193,7 @@ public class IngredientsGroupFragment extends Fragment {
                     });
                 }
 
-                itemsAdapter.notifyDataSetChanged();
+                //itemsAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -165,6 +201,15 @@ public class IngredientsGroupFragment extends Fragment {
                 System.out.println("database error!!" + databaseError);
             }
         });
+
+        String queryString = "http://food2fork.com/api/search?key={a53266eff3482baeae56e93836fcc011}&q=";
+        for (int i = 0; i < groupIng.size(); i++) {
+            String currentString = groupIng.get(i);
+            currentString += "%2C+";
+            queryString += currentString;
+        }
+
+        System.out.println(queryString);
     }
 
     /**

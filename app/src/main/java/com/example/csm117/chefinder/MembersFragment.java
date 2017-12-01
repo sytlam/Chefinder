@@ -222,7 +222,6 @@ public class MembersFragment extends Fragment {
         //add this group to their groups
         //query group name and add the new member
         //add the new member to the list view as well
-
         final ArrayList<String> userIds = new ArrayList<String>();
         final DatabaseReference dbRef= FirebaseDatabase.getInstance().getReference("users");
         final DatabaseReference dbRef2 = FirebaseDatabase.getInstance().getReference("groups");

@@ -10,7 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-public class GroupInfoActivity extends AppCompatActivity implements MembersFragment.OnFragmentInteractionListener, IngredientsGroupFragment.OnFragmentInteractionListener {
+public class GroupInfoActivity extends AppCompatActivity implements MembersFragment.OnFragmentInteractionListener,
+        IngredientsGroupFragment.OnFragmentInteractionListener, RecipesFragment.OnFragmentInteractionListener {
 
     private String groupName;
 
@@ -29,6 +30,7 @@ public class GroupInfoActivity extends AppCompatActivity implements MembersFragm
                     selectedFragment = IngredientsGroupFragment.newInstance(groupName);
                     break;
                 case R.id.navigation_recipes:
+                    selectedFragment = RecipesFragment.newInstance(groupName);
                     break;
             }
 
