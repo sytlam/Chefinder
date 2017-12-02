@@ -12,6 +12,11 @@ import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
+import android.graphics.Bitmap;
+
+
 /**
  * Created by albertli on 11/29/17.
  */
@@ -51,7 +56,23 @@ public class ImageAdapter extends BaseAdapter {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        // TODO Auto-generated method stub
+
+//        ImageView imageView;
+//
+//
+//        if (convertView == null) {
+//            // if it's not recycled, initialize some attributes
+//            imageView = new ImageView(mContext);
+//            imageView.setLayoutParams(new GridView.LayoutParams(200, 200));
+//        } else {
+//            imageView = (ImageView) convertView;
+//        }
+//
+//        //for (int i = 0; i < imageIds.length; i++)
+//            Picasso.with(this.mContext).load(imageIds[1]).resize(100, 100).into(imageView);
+//
+//        return imageView;
+
         Holder holder=new Holder();
         View rowView;
 
@@ -72,5 +93,6 @@ public class ImageAdapter extends BaseAdapter {
         });
 
         return rowView;
+
     }
 }

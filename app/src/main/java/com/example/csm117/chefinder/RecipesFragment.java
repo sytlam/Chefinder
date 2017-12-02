@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -26,6 +27,20 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.net.URLEncoder;
+import java.io.IOException;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONArray;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
+import java.util.Map;
+import java.util.HashMap;
 
 
 /**
@@ -47,6 +62,8 @@ public class RecipesFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
     private FirebaseUser user;
     private FirebaseDatabase db;
+    private OkHttpClient client = new OkHttpClient();
+    private String queryString = "";
 
     // references to our images
     private int[] mThumbIds = {
@@ -64,10 +81,14 @@ public class RecipesFragment extends Fragment {
     };
 
     private String[] mNames = {
-        "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo",
+            "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo",
             "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo",
             "doggo", "doggo"
     };
+
+    private List<String> foodName = new ArrayList<>();
+    private List<String> foodPics = new ArrayList<>();
+
 
     public RecipesFragment() {
         // Required empty public constructor
@@ -104,6 +125,9 @@ public class RecipesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+
+        StrictMode.setThreadPolicy(policy);
         View v = inflater.inflate(R.layout.fragment_recipes, container, false);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
@@ -113,20 +137,12 @@ public class RecipesFragment extends Fragment {
             db = FirebaseDatabase.getInstance();
             setUpDB();
 
+            //String[] mNames = foodName.toArray(new String[foodName.size()]);
+            //String[] mThumbIds = foodName.toArray(new String[foodName.size()]);
+
             gridView = (GridView) v.findViewById(R.id.customgrid);
             gridView.setAdapter(new ImageAdapter(this, mNames, mThumbIds));
-//            gridView = (GridView) v.findViewById(R.id.gridview);
-//            //itemsAdapter =
-//                    new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, new ArrayList<String>());
-//            gridView.setAdapter(new ImageAdapter(getActivity()));
-//
-//            gridView.setOnItemClickListener(new OnItemClickListener() {
-//                public void onItemClick(AdapterView<?> parent, View v,
-//                                        int position, long id) {
-//                    Toast.makeText(getActivity(), "" + position,
-//                            Toast.LENGTH_SHORT).show();
-//                }
-//            });
+
         }
         else {
             Toast msg = Toast.makeText(getActivity(),"You must be signed in with Facebook to view/add group members",
@@ -138,6 +154,8 @@ public class RecipesFragment extends Fragment {
             msg.show();
         }
 
+//        System.out.println("Query string at end of onCreateView is");
+//        System.out.println(queryString);
         return v;
     }
 
@@ -181,8 +199,27 @@ public class RecipesFragment extends Fragment {
                             if (dataSnapshot.exists()) {
                                 // dataSnapshot is the "issue" node with all children with id 0
                                 for (DataSnapshot issue : dataSnapshot.getChildren()) {
-                                    groupIng.add((String)issue.getValue());
+                                    groupIng.add((String) issue.getValue());
                                 }
+                                String parameters = "";
+                                boolean first = true;
+                                for (int i = 0; i < groupIng.size(); i++) {
+                                    if (first) {
+                                        String currentString = groupIng.get(i);
+                                        parameters += currentString;
+                                        first = false;
+                                    }
+                                    else {
+                                        String currentString = ", " + groupIng.get(i);
+                                        parameters += currentString;
+                                    }
+                                }
+                                //parameters = URLEncoder.encode(parameters, "UTF-8");
+                                queryString = "http://food2fork.com/api/search?key=a53266eff3482baeae56e93836fcc011&q=" + parameters;
+                                JSONObject response = run(queryString);
+                                System.out.println(queryString);
+                                System.out.println(response);
+                                extractData(response);
                             }
                         }
 
@@ -196,20 +233,54 @@ public class RecipesFragment extends Fragment {
                 //itemsAdapter.notifyDataSetChanged();
             }
 
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 System.out.println("database error!!" + databaseError);
             }
         });
 
-        String queryString = "http://food2fork.com/api/search?key={a53266eff3482baeae56e93836fcc011}&q=";
-        for (int i = 0; i < groupIng.size(); i++) {
-            String currentString = groupIng.get(i);
-            currentString += "%2C+";
-            queryString += currentString;
+    }
+
+    public void extractData(JSONObject response)    {
+        int recipeCount;
+        JSONArray recipes;
+
+        try {
+            recipeCount = response.getInt("count");
+            recipes = response.getJSONArray("recipes");
+            for(int i = 0; i < recipes.length(); i++)   {
+                String name = recipes.getJSONObject(i).getString("title");
+                foodName.add(name);
+                String picURL = recipes.getJSONObject(i).getString("image_url");
+                foodPics.add(picURL);
+            }
+        } catch(JSONException e)    {
         }
 
-        System.out.println(queryString);
+    }
+
+    public String search(String query) {
+        try {
+            final String url = "http://food2fork.com/api/search?key=a53266eff3482baeae56e93836fcc011&q=" + URLEncoder.encode(query, "UTF-8");
+            return url;
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public JSONObject run(String url)  {
+        try {
+            Request request = new Request.Builder().url(url).build();
+            Response response = client.newCall(request).execute();
+            return new JSONObject(response.body().string());
+        }
+        catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+        return new JSONObject();
     }
 
     /**
@@ -227,3 +298,4 @@ public class RecipesFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 }
+
