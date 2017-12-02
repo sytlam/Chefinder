@@ -9,7 +9,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-public class HomePageActivity extends AppCompatActivity implements GroupsFragment.OnFragmentInteractionListener, IngredientsFragment.OnFragmentInteractionListener {
+public class HomePageActivity extends AppCompatActivity implements GroupsFragment.OnFragmentInteractionListener,
+        IngredientsFragment.OnFragmentInteractionListener, NotificationsFragment.OnFragmentInteractionListener {
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
