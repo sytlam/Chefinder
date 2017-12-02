@@ -26,6 +26,15 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.net.URLEncoder;
+import java.io.IOException;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 
 /**
@@ -47,6 +56,8 @@ public class RecipesFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
     private FirebaseUser user;
     private FirebaseDatabase db;
+    private OkHttpClient client = new OkHttpClient();
+    private String queryString = "  ";
 
     // references to our images
     private int[] mThumbIds = {
@@ -113,6 +124,8 @@ public class RecipesFragment extends Fragment {
             db = FirebaseDatabase.getInstance();
             setUpDB();
 
+            System.out.println("Query string is");
+            System.out.println(queryString);
             gridView = (GridView) v.findViewById(R.id.customgrid);
             gridView.setAdapter(new ImageAdapter(this, mNames, mThumbIds));
 //            gridView = (GridView) v.findViewById(R.id.gridview);
@@ -181,8 +194,25 @@ public class RecipesFragment extends Fragment {
                             if (dataSnapshot.exists()) {
                                 // dataSnapshot is the "issue" node with all children with id 0
                                 for (DataSnapshot issue : dataSnapshot.getChildren()) {
-                                    groupIng.add((String)issue.getValue());
+                                    groupIng.add((String) issue.getValue());
                                 }
+                                String parameters = "";
+                                boolean first = true;
+                                for (int i = 0; i < groupIng.size(); i++) {
+                                    if (first) {
+                                        String currentString = groupIng.get(i);
+                                        parameters += currentString;
+                                        first = false;
+                                    }
+                                    else {
+                                        String currentString = ", " + groupIng.get(i);
+                                        parameters += currentString;
+                                    }
+                                }
+                                //parameters = URLEncoder.encode(parameters, "UTF-8");
+                                queryString = search(parameters);
+//                                JSONObject response = run(queryString);
+//                                System.out.println(response);
                             }
                         }
 
@@ -196,20 +226,72 @@ public class RecipesFragment extends Fragment {
                 //itemsAdapter.notifyDataSetChanged();
             }
 
+//            private static JSONObject run(String url) throws IOException {
+//                final Request request = new Request.Builder().url(url).build();
+//                final Response response = client.newCall(request).execute();
+//                return new JSONObject(response.body().string());
+//            }
+
+//            public String search(String query) {
+//                try {
+//                    final String url = "http://food2fork.com/api/search?key=a53266eff3482baeae56e93836fcc011&q=" + URLEncoder.encode(query, "UTF-8");
+//                    return url;
+//                }
+//                catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//                return "";
+//            }
+//
+//            public JSONObject run(String url)  {
+//                try {
+//                    Request request = new Request.Builder().url(url).build();
+//                    Response response = client.newCall(request).execute();
+//                    return new JSONObject(response.body().string());
+//                }
+//                catch (IOException | JSONException e) {
+//                    e.printStackTrace();
+//                }
+//                return new JSONObject();
+//            }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 System.out.println("database error!!" + databaseError);
             }
         });
 
-        String queryString = "http://food2fork.com/api/search?key={a53266eff3482baeae56e93836fcc011}&q=";
-        for (int i = 0; i < groupIng.size(); i++) {
-            String currentString = groupIng.get(i);
-            currentString += "%2C+";
-            queryString += currentString;
-        }
+//        String queryString = "http://food2fork.com/api/search?key={a53266eff3482baeae56e93836fcc011}&q=";
+//        for (int i = 0; i < groupIng.size(); i++) {
+//            String currentString = groupIng.get(i);
+//            currentString += "%2C+";
+//            queryString += currentString;
+//        }
+//
+//        System.out.println(queryString);
+    }
 
-        System.out.println(queryString);
+    public String search(String query) {
+        try {
+            final String url = "http://food2fork.com/api/search?key=a53266eff3482baeae56e93836fcc011&q=" + URLEncoder.encode(query, "UTF-8");
+            return url;
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public JSONObject run(String url)  {
+        try {
+            Request request = new Request.Builder().url(url).build();
+            Response response = client.newCall(request).execute();
+            return new JSONObject(response.body().string());
+        }
+        catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+        return new JSONObject();
     }
 
     /**
