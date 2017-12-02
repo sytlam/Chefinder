@@ -35,7 +35,7 @@ dependencies {
     implementation 'com.facebook.android:facebook-android-sdk:[4,5)'
     implementation 'com.google.firebase:firebase-auth:11.4.2'
     compile 'com.squareup.okhttp3:okhttp:3.9.1'
-
+    compile 'com.squareup.picasso:picasso:2.5.2'
 
 }
 
