@@ -74,6 +74,7 @@ public class NotificationsFragment extends Fragment implements AdapterView.OnIte
         View v = inflater.inflate(R.layout.fragment_notifications, container, false);
         user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
+            db = FirebaseDatabase.getInstance();
             setUpDB();
             list = (ListView) v.findViewById(R.id.NotificationList);
             list.setOnItemLongClickListener(this);
