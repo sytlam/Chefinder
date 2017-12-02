@@ -230,7 +230,7 @@ public class MembersFragment extends Fragment {
                         if (item_snapshot.child("name").getValue().equals(name)) {
                             userIds.add(item_snapshot.getKey());
                             DatabaseReference dbRef3 = dbRef.child(item_snapshot.getKey() +"/notifications");
-                            dbRef3.child("message").push().setValue(user.getDisplayName() + " added you to " + groupName);
+                            dbRef3.push().setValue(user.getDisplayName() + " added you to " + groupName);
                             dbRef.child(item_snapshot.getKey() + "/groups").push().setValue(groupName);
                             dbRef2.child(groupName + "/members").push().setValue(item_snapshot.getKey());
                         }

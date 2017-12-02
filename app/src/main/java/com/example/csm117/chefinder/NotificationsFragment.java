@@ -73,12 +73,16 @@ public class NotificationsFragment extends Fragment implements AdapterView.OnIte
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_notifications, container, false);
         user = FirebaseAuth.getInstance().getCurrentUser();
+
         if (user != null) {
+
+            db = FirebaseDatabase.getInstance();
             setUpDB();
             list = (ListView) v.findViewById(R.id.NotificationList);
             list.setOnItemLongClickListener(this);
             itemsAdapter =
                     new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, new ArrayList<String>());
+
             list.setAdapter(itemsAdapter);
         }
 
@@ -112,15 +116,18 @@ public class NotificationsFragment extends Fragment implements AdapterView.OnIte
 
     public void setUpDB() {
         DatabaseReference dbRef = db.getReference("users");
+        System.out.println("Working");
         dbRef.child(user.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                System.out.println("Working");
                 itemsAdapter.clear();
                 for (DataSnapshot eventSnapshot : dataSnapshot.child("notifications").getChildren()) {
                     System.out.println("data change");
-                    String val = eventSnapshot.child("message").getValue().toString();
 
-                    System.out.println(val);
+                    String val = eventSnapshot.getValue().toString();
+
+
                     itemsAdapter.add(val);
                 }
 
@@ -155,7 +162,7 @@ public class NotificationsFragment extends Fragment implements AdapterView.OnIte
                 for (DataSnapshot eventSnapshot : dataSnapshot.getChildren()) {
                     System.out.println(eventSnapshot.getKey());
                     System.out.println(eventSnapshot.getValue());
-                    if (eventSnapshot.getValue() == (String)itemsAdapter.getItem(i)) {
+                    if (eventSnapshot.getValue() == itemsAdapter.getItem(i)) {
                         eventSnapshot.getRef().removeValue();
                         break;
                     }
