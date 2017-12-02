@@ -1,9 +1,12 @@
 package com.example.csm117.chefinder;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -23,6 +26,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -37,7 +41,7 @@ import java.util.Arrays;
  * Use the {@link GroupsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class GroupsFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class GroupsFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 //    // TODO: Rename parameter arguments, choose names that match
 //    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 //    private static final String ARG_PARAM1 = "param1";
@@ -115,6 +119,7 @@ public class GroupsFragment extends Fragment implements AdapterView.OnItemClickL
             listView = v.findViewById(R.id.groupList);
             listView.setAdapter(listAdapater);
             listView.setOnItemClickListener(this);
+            listView.setOnItemLongClickListener(this);
         }
         else {
             Toast msg = Toast.makeText(getActivity(),"You must be signed in with Facebook to view/add groups",
@@ -197,6 +202,85 @@ public class GroupsFragment extends Fragment implements AdapterView.OnItemClickL
         startActivity(intent);
 
     }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int i, long l) {
+        System.out.println("LongPress detected");
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(this.getActivity(), android.R.style.Theme_Material_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(this.getActivity());
+        }
+        builder.setTitle("Delete entry")
+                .setMessage("Are you sure you want to delete this entry?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                        System.out.println("item " + i + " was clicked");
+                        DatabaseReference dbRef = db.getReference("groups");
+                        System.out.println(listAdapater.getItem(i));
+                        Query itemQuery = dbRef.child(listAdapater.getItem(i) + "/members");
+                        itemQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                //System.out.println("delete data");
+                                //System.out.println(dataSnapshot.getKey());
+                                //System.out.println(dataSnapshot.getChildrenCount());
+                                for (DataSnapshot eventSnapshot : dataSnapshot.getChildren()) {
+                                    //System.out.println(eventSnapshot.getKey());
+                                    System.out.println("Checking " + eventSnapshot.getValue() + " vs " + user.getUid());
+
+                                    if (eventSnapshot.getValue().equals(user.getUid())) {
+                                        System.out.println("Removing" + eventSnapshot.getValue());
+                                        eventSnapshot.getRef().removeValue();
+                                        break;
+                                    }
+
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                System.out.println("Cancelled");
+                            }
+                        });
+                        DatabaseReference dbRef2 = db.getReference("users");
+                        Query itemQuery2 = dbRef2.child(user.getUid() + "/groups");
+                        itemQuery2.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                for (DataSnapshot eventSnapshot : dataSnapshot.getChildren()) {
+                                    //System.out.println(eventSnapshot.getKey());
+                                    System.out.println("Checking " + eventSnapshot.getValue() + " vs " + listAdapater.getItem(i));
+                                    if (eventSnapshot.getValue().equals(listAdapater.getItem(i))) {
+                                        System.out.println("Removing" + eventSnapshot.getValue());
+                                        eventSnapshot.getRef().removeValue();
+                                        break;
+                                    }
+
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                System.out.println("Cancelled");
+                            }
+                        });
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+
+
+        return true;
+    }
+
 
     public void setUpDB() {
         DatabaseReference dbRef = db.getReference("users");//db.getReference(user.getUid());

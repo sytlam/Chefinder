@@ -18,7 +18,12 @@
         android:layout_marginBottom="64dp"
         android:src="@android:drawable/ic_menu_add" />
 
-
+        <TextView
+            android:id="@+id/interactioninstructions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/group_instuctutions"
+            android:layout_marginBottom="16dp"/>
 
         <ListView
             android:id="@+id/groupList"
@@ -26,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-
+            android:layout_below="@id/interactioninstructions"
             android:layout_marginBottom="50dp">
 
         </ListView>

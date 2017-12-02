@@ -1,7 +1,10 @@
 package com.example.csm117.chefinder;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -149,31 +152,59 @@ public class NotificationsFragment extends Fragment implements AdapterView.OnIte
 
     @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int i, long l) {
-        System.out.println("item " + i + " was clicked");
-        DatabaseReference dbRef = db.getReference("users");
-        System.out.println(itemsAdapter.getItem(i));
-        Query itemQuery = dbRef.child(user.getUid() + "/notifications");
-        itemQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                System.out.println("delete data");
-                System.out.println(dataSnapshot.getKey());
-                System.out.println(dataSnapshot.getChildrenCount());
-                for (DataSnapshot eventSnapshot : dataSnapshot.getChildren()) {
-                    System.out.println(eventSnapshot.getKey());
-                    System.out.println(eventSnapshot.getValue());
-                    if (eventSnapshot.getValue() == itemsAdapter.getItem(i)) {
-                        eventSnapshot.getRef().removeValue();
-                        break;
-                    }
-                }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                System.out.println("Cancelled");
-            }
-        });
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(this.getActivity(), android.R.style.Theme_Material_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(this.getActivity());
+        }
+        builder.setTitle("Delete entry")
+                .setMessage("Are you sure you want to delete this entry?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                        System.out.println("item " + i + " was clicked");
+                        DatabaseReference dbRef = db.getReference("users");
+                        System.out.println(itemsAdapter.getItem(i));
+                        Query itemQuery = dbRef.child(user.getUid() + "/notifications");
+                        itemQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                System.out.println("delete data");
+                                System.out.println(dataSnapshot.getKey());
+                                System.out.println(dataSnapshot.getChildrenCount());
+                                for (DataSnapshot eventSnapshot : dataSnapshot.getChildren()) {
+                                    System.out.println(eventSnapshot.getKey());
+                                    System.out.println(eventSnapshot.getValue());
+                                    if (eventSnapshot.getValue() == itemsAdapter.getItem(i)) {
+                                        eventSnapshot.getRef().removeValue();
+                                        break;
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                System.out.println("Cancelled");
+                            }
+                        });
+
+
+
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+
+
+
+
         return true;
     }
 
