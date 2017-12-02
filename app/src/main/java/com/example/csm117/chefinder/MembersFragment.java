@@ -1,11 +1,13 @@
 package com.example.csm117.chefinder;
 
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+
 import android.os.Bundle;
-import android.provider.ContactsContract;
+
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
@@ -25,11 +27,15 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.firebase.iid.FirebaseInstanceIdService;
 
 import java.util.ArrayList;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 
 /**
@@ -156,10 +162,11 @@ public class MembersFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 itemsAdapter.clear();
                 for (DataSnapshot eventSnapshot : dataSnapshot.child("members").getChildren()) {
+
                     DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users");
 
                     Query query = ref.child(eventSnapshot.getValue() + "/name");
-                    query.addValueEventListener(new ValueEventListener() {
+                    query.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {
@@ -213,6 +220,7 @@ public class MembersFragment extends Fragment {
         //add the new member to the list view as well
         final ArrayList<String> userIds = new ArrayList<String>();
         final DatabaseReference dbRef= FirebaseDatabase.getInstance().getReference("users");
+        final DatabaseReference dbRef2 = FirebaseDatabase.getInstance().getReference("groups");
         for (int i = 0; i < l.size(); i++)   {
             final String name = l.get(i);
             dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -221,7 +229,10 @@ public class MembersFragment extends Fragment {
                     for (DataSnapshot item_snapshot : dataSnapshot.getChildren()) {
                         if (item_snapshot.child("name").getValue().equals(name)) {
                             userIds.add(item_snapshot.getKey());
+                            DatabaseReference dbRef3 = dbRef.child(item_snapshot.getKey() +"/notifications");
+                            dbRef3.child("message").push().setValue(user.getDisplayName() + " added you to " + groupName);
                             dbRef.child(item_snapshot.getKey() + "/groups").push().setValue(groupName);
+                            dbRef2.child(groupName + "/members").push().setValue(item_snapshot.getKey());
                         }
                     }
                 }
@@ -230,13 +241,12 @@ public class MembersFragment extends Fragment {
 
                 }
             });
-
-
         }
-
-
-
     }
+
+
+
+
 
     /**
      * This interface must be implemented by activities that contain this
