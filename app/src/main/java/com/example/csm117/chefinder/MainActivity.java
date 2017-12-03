@@ -1,6 +1,7 @@
 package com.example.csm117.chefinder;
 
 import android.content.Intent;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -38,6 +39,8 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONArray;
+import java.util.ArrayList;
+
 
 
 public class MainActivity extends AppCompatActivity {
@@ -47,6 +50,9 @@ public class MainActivity extends AppCompatActivity {
     private CallbackManager callbackManager;
     private FirebaseAuth mAuth;
     private AccessTokenTracker tracker;
+    private ArrayList<String> listFriend = new ArrayList<String>(0);
+
+
 
 
     @Override
@@ -73,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
             public void onSuccess(LoginResult loginResult) {
                 System.out.println("login success: " + loginResult);
                 handleFacebookAccessToken(loginResult.getAccessToken());
-                //getFriendList(loginResult.getAccessToken());
+                //getFriendList();
             }
 
             @Override
@@ -104,7 +110,10 @@ public class MainActivity extends AppCompatActivity {
         };
     }
 
-    public void getFriendList(AccessToken token)    {
+    public ArrayList<String> getFriendList()    {
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
         new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
                 "/me/friends",
@@ -117,18 +126,17 @@ public class MainActivity extends AppCompatActivity {
                         JSONArray friendList = null;
                         try {
                             friendList = friends.getJSONArray("data");
-                            System.out.println("parse success.");
                         } catch(JSONException e)    {
                             e.printStackTrace();
                         }
-                        final DatabaseReference dbRef= FirebaseDatabase.getInstance().getReference("users");
-                        dbRef.child(mAuth.getCurrentUser().getUid()).child("friends").setValue(null);
+                        //final DatabaseReference dbRef= FirebaseDatabase.getInstance().getReference("users");
+                        //dbRef.child(mAuth.getCurrentUser().getUid()).child("friends").setValue(null);
                         for (int i = 0; i < friendList.length(); i++)   {
                             try {
                                 JSONObject amigo = friendList.getJSONObject(i);
-                                System.out.println("name of friend is: " + amigo.getString("name"));
-                                final String name = amigo.getString("name");
-                                dbRef.child(mAuth.getCurrentUser().getUid()).child("friends").push().setValue(name);
+                                listFriend.add(amigo.getString("name"));
+                                //final String name = amigo.getString("name");
+                                //dbRef.child(mAuth.getCurrentUser().getUid()).child("friends").push().setValue(name);
 
 //                                dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
 //                                    @Override
@@ -155,7 +163,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 }
-        ).executeAsync();
+        ).executeAndWait();
+        return listFriend;
     }
 
     @Override
@@ -189,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
                             dbRef.child(user.getUid()).child("instanceID").setValue(instanceID.getToken());
                             System.out.println("facebook access user: " + user);
                             updateUI(user);
-                            getFriendList(AccessToken.getCurrentAccessToken());
+                            getFriendList();
                         } else {
                             // If sign in fails, display a message to the user.
                             Toast.makeText(MainActivity.this, "Authentication failed.",

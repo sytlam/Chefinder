@@ -1,14 +1,13 @@
 package com.example.csm117.chefinder;
 
+import android.net.Uri;
 import android.os.Bundle;
 
-import android.support.v7.app.AppCompatActivity;
-
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -18,20 +17,23 @@ import com.facebook.share.widget.AppInviteDialog;
 
 import android.support.v4.app.Fragment;
 import android.widget.Toast;
-
-
+import java.util.ArrayList;
 
 
 public class InviteFragment extends Fragment implements View.OnClickListener{
 
     private ListView list;
     private Button invButton;
+    private TextView text;
+    private static ArrayList<String> friends;
+    private ArrayAdapter<String> itemsAdapter;
 
     public InviteFragment() {
         //empty constructor
     }
 
-    public static InviteFragment newInstance()  {
+    public static InviteFragment newInstance(ArrayList<String> input)  {
+        friends = input;
         InviteFragment fragment = new InviteFragment();
         return fragment;
     }
@@ -45,9 +47,14 @@ public class InviteFragment extends Fragment implements View.OnClickListener{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)  {
         View v = inflater.inflate(R.layout.fragment_invite, container, false);
-        //list = (ListView) v.findViewById(R.id.NotificationList);
         invButton = (Button) v.findViewById(R.id.invite_button);
         invButton.setOnClickListener(this);
+        text = (TextView) v.findViewById(R.id.friendText);
+        list = (ListView) v.findViewById(R.id.friendList);
+        itemsAdapter =
+                new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, friends);
+        list.setAdapter(itemsAdapter);
+
         return v;
     }
 

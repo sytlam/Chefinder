@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import java.util.ArrayList;
 
 public class HomePageActivity extends AppCompatActivity implements GroupsFragment.OnFragmentInteractionListener, IngredientsFragment.OnFragmentInteractionListener, NotificationsFragment.OnFragmentInteractionListener {
 
@@ -34,8 +35,11 @@ public class HomePageActivity extends AppCompatActivity implements GroupsFragmen
                     selectedFragment = NotificationsFragment.newInstance();
                     break;
                 case R.id.navigation_invitation:
+                    MainActivity m = new MainActivity();
+                    ArrayList<String> list = m.getFriendList();
                     setTitle(R.string.title_invite);
-                    selectedFragment = InviteFragment.newInstance();
+                    selectedFragment = InviteFragment.newInstance(list);
+
             }
 
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();

@@ -24,6 +24,8 @@
     <string name="chefinder_logo">Chefinder Logo</string>
     <string name="notification_instructions">Long Press on a Notification to Clear It</string>
     <string name="group_instuctutions">Press on a group for information about it. Long Press to remove yourself from that group.</string>
+    <string name="share_app">Share Chefinder with Friends</string>
+    <string name="friend_list">Friends with Chefinder</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
