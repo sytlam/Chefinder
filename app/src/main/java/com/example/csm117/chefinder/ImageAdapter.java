@@ -40,7 +40,7 @@ public class ImageAdapter extends BaseAdapter {
         mContext=recipesFragment.getActivity();
         pictures=pic;
         recipes=recipe;
-        inflater = ( LayoutInflater ) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        inflater = ( LayoutInflater ) recipesFragment.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     public int getCount() {
