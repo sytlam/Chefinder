@@ -35,7 +35,7 @@ public class HomePageActivity extends AppCompatActivity implements GroupsFragmen
                     break;
                 case R.id.navigation_invitation:
                     setTitle(R.string.title_invite);
-                    selectedFragment = IngredientsFragment.newInstance();
+                    selectedFragment = InviteFragment.newInstance();
             }
 
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
