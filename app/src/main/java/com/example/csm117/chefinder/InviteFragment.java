@@ -1,8 +1,9 @@
 package com.example.csm117.chefinder;
 
-import android.net.Uri;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -16,6 +17,8 @@ import com.facebook.share.model.AppInviteContent;
 import com.facebook.share.widget.AppInviteDialog;
 
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+
 import android.widget.Toast;
 import java.util.ArrayList;
 
@@ -27,6 +30,7 @@ public class InviteFragment extends Fragment implements View.OnClickListener{
     private TextView text;
     private static ArrayList<String> friends;
     private ArrayAdapter<String> itemsAdapter;
+    public FragmentManager fm = getFragmentManager();
 
     public InviteFragment() {
         //empty constructor
@@ -62,10 +66,33 @@ public class InviteFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onClick(View v) {
         sendInvite();
-        Toast.makeText(getActivity(),"Invite Sent", Toast.LENGTH_SHORT).show();
+
+        AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
+
+        ad.setCancelable(true);
+        ad.setIcon(R.drawable.chefinder_logo);
+        ad.setTitle("Invite Friends");
+        ad.setMessage("This will send app installation requests to your facebook friends.");
+        ad.setPositiveButton("Invite", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(getActivity(),"Invite Sent", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Negative Button
+        ad.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog,	int which) {
+                // Do something else
+            }
+        });
+        AlertDialog alert = ad.create();
+        alert.show();
+
+        //ImageFragment frag = new ImageFragment();
+        //frag.show(fm, "Invite Friend");
     }
 
-    // to be called in OnButtonPressed
+    // to be called in OnButtonPressed - won't work right now cause app is not official
     @SuppressWarnings( "deprecation" )
     private void sendInvite()   {
         String appLinkUrl, previewImageUrl;
