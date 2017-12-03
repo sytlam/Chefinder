@@ -52,9 +52,6 @@ public class MainActivity extends AppCompatActivity {
 
     private int temp = 0;
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
             public void onSuccess(LoginResult loginResult) {
                 System.out.println("login success: " + loginResult);
                 handleFacebookAccessToken(loginResult.getAccessToken());
+                gotoHomepage();
             }
 
             @Override

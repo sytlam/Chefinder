@@ -38,7 +38,6 @@ public class ImageAdapter extends BaseAdapter {
         pictures=pic;
         recipes=recipe;
         inflater = ( LayoutInflater ) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
     }
 
     public int getCount() {
@@ -50,13 +49,7 @@ public class ImageAdapter extends BaseAdapter {
     }
 
     public long getItemId(int position) {
-        return 0;
-    }
-
-    public class Holder
-    {
-        TextView text;
-        ImageView img;
+        return position;
     }
 
     @Override
@@ -127,20 +120,20 @@ public class ImageAdapter extends BaseAdapter {
 
     // references to our images
     private Integer[] mThumbIds = {
-            R.drawable.sample_2, R.drawable.sample_3,
-            R.drawable.sample_4, R.drawable.sample_5,
-            R.drawable.sample_6, R.drawable.sample_7,
             R.drawable.sample_0, R.drawable.sample_1,
             R.drawable.sample_2, R.drawable.sample_3,
             R.drawable.sample_4, R.drawable.sample_5,
             R.drawable.sample_6, R.drawable.sample_7,
-            R.drawable.sample_0, R.drawable.sample_1,
-            R.drawable.sample_2, R.drawable.sample_3,
-            R.drawable.sample_4, R.drawable.sample_5,
-            R.drawable.sample_6, R.drawable.sample_7,
-            R.drawable.sample_6, R.drawable.sample_7,
-            R.drawable.sample_0, R.drawable.sample_1,
-            R.drawable.sample_2, R.drawable.sample_3,
-            R.drawable.sample_4, R.drawable.sample_5
+            R.drawable.sample_8, R.drawable.sample_9,
+            R.drawable.sample_10, R.drawable.sample_11,
+            R.drawable.sample_12, R.drawable.sample_13,
+            R.drawable.sample_14, R.drawable.sample_15,
+            R.drawable.sample_16, R.drawable.sample_17,
+            R.drawable.sample_18, R.drawable.sample_19,
+            R.drawable.sample_20, R.drawable.sample_21,
+            R.drawable.sample_22, R.drawable.sample_23,
+            R.drawable.sample_24, R.drawable.sample_25,
+            R.drawable.sample_26, R.drawable.sample_27,
+            R.drawable.sample_28, R.drawable.sample_29
     };
 }
