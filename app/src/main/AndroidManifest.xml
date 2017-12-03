@@ -47,6 +47,8 @@
             android:name=".GroupInfoActivity"
             android:label="@string/title_activity_group_info" />
         <activity android:name=".AddingMembersActivity"></activity>
+        <activity android:name=".WebActivity" >
+        </activity>
         <!--
         <service
             android:name=".MyFirebaseMessagingService">

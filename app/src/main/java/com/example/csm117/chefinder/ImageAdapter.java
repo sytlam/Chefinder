@@ -2,6 +2,7 @@ package com.example.csm117.chefinder;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.media.Image;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -26,14 +27,16 @@ import android.graphics.Bitmap;
 public class ImageAdapter extends BaseAdapter {
 
     private Context mContext;
-    private String[] result;
-    private String[] imageIds;
+    private String[] names;
+    private String[] pictures;
+    private String[] recipes;
     private static LayoutInflater inflater=null;
-    public ImageAdapter(RecipesFragment recipesFragment, String[] names, String[] images) {
+    public ImageAdapter(RecipesFragment recipesFragment, String[] name, String[] pic, String[] recipe) {
         // TODO Auto-generated constructor stub
-        result=names;
+        names=name;
         mContext=recipesFragment.getActivity();
-        imageIds=images;
+        pictures=pic;
+        recipes=recipe;
         inflater = ( LayoutInflater ) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
     }
@@ -59,29 +62,6 @@ public class ImageAdapter extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
 
-//        ImageView imageView;
-//        Holder holder=new Holder();
-//        View rowView;
-//
-//        rowView = inflater.inflate(R.layout.grid_layout, null);
-//        holder.text =(TextView) rowView.findViewById(R.id.texts);
-//        imageView =(ImageView) rowView.findViewById(R.id.images);
-//
-//        holder.text.setText(result[position]);
-//        //holder.img.setImageResource(imageIds[position]);
-//        holder.img = imageView;
-//        Picasso.with(this.mContext).load(imageIds[position]).into(imageView);
-//
-//        rowView.setOnClickListener(new OnClickListener() {
-//
-//            @Override
-//            public void onClick(View v) {
-//                // TODO Auto-generated method stub
-//                Toast.makeText(mContext, "You Clicked "+result[position], Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//
-//        return rowView;
         ImageView imageView;
         TextView textView;
         View rowView;
@@ -119,10 +99,15 @@ public class ImageAdapter extends BaseAdapter {
                 ad.setCancelable(true);
                 ad.setIcon(R.drawable.chefinder_logo);
                 ad.setTitle("Instructions");
-                ad.setMessage("http://allrecipes.com/recipe/40057/autumn-spice-ham-steak/");
+                final String site = "http://allrecipes.com/recipe/40057/autumn-spice-ham-steak/";
+                //final String site = recipes[position];
+                ad.setMessage(site);
                 ad.setPositiveButton("Continue to website", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(mContext,"Go make food.", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(mContext, WebActivity.class);
+                        intent.putExtra("url", site);
+                        mContext.startActivity(intent);
+
                     }
                 });
                 ad.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

@@ -87,6 +87,8 @@ public class RecipesFragment extends Fragment {
 
     private List<String> foodName = new ArrayList<>();
     private List<String> foodPics = new ArrayList<>();
+    private List<String> foodRecipe = new ArrayList<>();
+
 
 
     public RecipesFragment() {
@@ -148,12 +150,13 @@ public class RecipesFragment extends Fragment {
 
             dialog.dismiss();
 
-            String[] mNames = foodName.toArray(new String[foodName.size()]);
-            String[] mThumbIds = foodPics.toArray(new String[foodPics.size()]);
+            String[] names = foodName.toArray(new String[foodName.size()]);
+            String[] pictures = foodPics.toArray(new String[foodPics.size()]);
+            String[] recipes = foodRecipe.toArray(new String[foodRecipe.size()]);
             System.out.println("length is" + foodPics.size());
 
             gridView = (GridView) v.findViewById(R.id.gridview);
-            gridView.setAdapter(new ImageAdapter(this, mNames, mThumbIds));
+            gridView.setAdapter(new ImageAdapter(this, names, pictures, recipes));
 
         }
         else {
@@ -266,6 +269,9 @@ public class RecipesFragment extends Fragment {
                 foodName.add(name);
                 String picURL = recipes.getJSONObject(i).getString("image_url");
                 foodPics.add(picURL);
+                String recipeURL = recipes.getJSONObject(i).getString("source_url");
+                foodRecipe.add(recipeURL);
+
             }
         } catch(JSONException e)    {
         }
