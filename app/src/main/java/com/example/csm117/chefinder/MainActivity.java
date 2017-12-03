@@ -41,8 +41,6 @@ import org.json.JSONObject;
 import org.json.JSONArray;
 import java.util.ArrayList;
 
-
-
 public class MainActivity extends AppCompatActivity {
 
     private Button homepage;
@@ -51,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private AccessTokenTracker tracker;
     private ArrayList<String> listFriend = new ArrayList<String>(0);
+
+    private int temp = 0;
 
 
 
@@ -79,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
             public void onSuccess(LoginResult loginResult) {
                 System.out.println("login success: " + loginResult);
                 handleFacebookAccessToken(loginResult.getAccessToken());
-                //getFriendList();
             }
 
             @Override
@@ -214,6 +213,10 @@ public class MainActivity extends AppCompatActivity {
     private void updateUI(FirebaseUser user) {
         if (user != null) {
             System.out.println("login success!");
+            if (temp == 0) {
+                gotoHomepage();
+                temp = 1;
+            }
         } else {
             System.out.println("not logged in");
         }
