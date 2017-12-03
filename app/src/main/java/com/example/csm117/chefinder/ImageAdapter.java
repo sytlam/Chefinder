@@ -41,7 +41,7 @@ public class ImageAdapter extends BaseAdapter {
     }
 
     public int getCount() {
-        return mThumbIds.length;
+        return names.length;
     }
 
     public Object getItem(int position) {
@@ -64,17 +64,14 @@ public class ImageAdapter extends BaseAdapter {
             rowView = inflater.inflate(R.layout.grid_layout, null);
             imageView = (ImageView) rowView.findViewById(R.id.images);
             textView = (TextView) rowView.findViewById(R.id.texts);
-            textView.setText("boosted");
-            //textView.setText(result[position]);
+            textView.setText("");
+            if (position < names.length)
+                textView.setText(names[position]);
 
-            String url = "http://static.food2fork.com/266803a7e1.jpg";
-            if (position == 2)
-                url = "http://static.food2fork.com/tamalecornbreaddressing_DSC14415f3b3fc8.jpg";
-            if (position == 3)
-                url = "http://static.food2fork.com/IMG_1059180x180a74c.jpg";
+            String url = "http://www.lifeofpix.com/wp-content/themes/lifeofpix_v2/img/LOV-white.svg";
 
-            //Picasso.with(this.mContext).load(imageIds[position])
-            //        .resize(200, 200).into(imageView);
+            if (position < pictures.length)
+                url = pictures[position];
 
             Picasso.with(this.mContext).load(url)
                     .resize(200, 200).into(imageView);
@@ -83,36 +80,37 @@ public class ImageAdapter extends BaseAdapter {
             rowView = (View)convertView;
         }
 
-        rowView.setOnClickListener(new OnClickListener() {
+        if (position < recipes.length) {
+            rowView.setOnClickListener(new OnClickListener() {
 
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder ad = new AlertDialog.Builder(mContext);
+                @Override
+                public void onClick(View v) {
+                    AlertDialog.Builder ad = new AlertDialog.Builder(mContext);
 
-                ad.setCancelable(true);
-                ad.setIcon(R.drawable.chefinder_logo);
-                ad.setTitle("Instructions");
-                final String site = "http://allrecipes.com/recipe/40057/autumn-spice-ham-steak/";
-                //final String site = recipes[position];
-                ad.setMessage(site);
-                ad.setPositiveButton("Continue to website", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(mContext, WebActivity.class);
-                        intent.putExtra("url", site);
-                        mContext.startActivity(intent);
+                    ad.setCancelable(true);
+                    ad.setIcon(R.drawable.chefinder_logo);
+                    ad.setTitle("Instructions");
+                    final String site = recipes[position];
+                    ad.setMessage(site);
+                    ad.setPositiveButton("Continue to website", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(mContext, WebActivity.class);
+                            intent.putExtra("url", site);
+                            mContext.startActivity(intent);
 
-                    }
-                });
-                ad.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,	int which) {
-                        // Do something else
-                    }
-                });
+                        }
+                    });
+                    ad.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Do something else
+                        }
+                    });
 
-                AlertDialog alert = ad.create();
-                alert.show();
-            }
-        });
+                    AlertDialog alert = ad.create();
+                    alert.show();
+                }
+            });
+        }
 
         return rowView;
 
