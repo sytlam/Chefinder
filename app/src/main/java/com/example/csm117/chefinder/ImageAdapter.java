@@ -19,6 +19,9 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import android.graphics.Bitmap;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 
 /**
  * Created by albertli on 11/29/17.
@@ -45,7 +48,7 @@ public class ImageAdapter extends BaseAdapter {
     }
 
     public Object getItem(int position) {
-        return null;
+        return names[position];
     }
 
     public long getItemId(int position) {
@@ -59,64 +62,67 @@ public class ImageAdapter extends BaseAdapter {
         TextView textView;
         View rowView;
 
-        if (convertView == null) {
+   //     if (convertView == null) {
 
             rowView = inflater.inflate(R.layout.grid_layout, null);
             imageView = (ImageView) rowView.findViewById(R.id.images);
             textView = (TextView) rowView.findViewById(R.id.texts);
-            textView.setText("");
-            if (position < names.length)
-                textView.setText(names[position]);
+            textView.setText(names[position]);
 
-            String url = "http://www.lifeofpix.com/wp-content/themes/lifeofpix_v2/img/LOV-white.svg";
+            System.out.println("position is " + position);
+            System.out.println("name is " + names[position]);
 
-            if (position < pictures.length)
-                url = pictures[position];
+
+            String url = pictures[position];
+            System.out.println("picture is " + url);
+            System.out.println("url is " + recipes[position]);
+
 
             Picasso.with(this.mContext).load(url)
                     .resize(200, 200).into(imageView);
-        }
-        else    {
-            rowView = (View)convertView;
-        }
+//        }
+//        else    {
+//            rowView = (View)convertView;
+//        }
 
-        if (position < recipes.length) {
-            rowView.setOnClickListener(new OnClickListener() {
 
-                @Override
-                public void onClick(View v) {
-                    AlertDialog.Builder ad = new AlertDialog.Builder(mContext);
+        rowView.setOnClickListener(new OnClickListener() {
 
-                    ad.setCancelable(true);
-                    ad.setIcon(R.drawable.chefinder_logo);
-                    ad.setTitle("Instructions");
-                    final String site = recipes[position];
-                    ad.setMessage(site);
-                    ad.setPositiveButton("Continue to website", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent(mContext, WebActivity.class);
-                            intent.putExtra("url", site);
-                            mContext.startActivity(intent);
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder ad = new AlertDialog.Builder(mContext);
 
-                        }
-                    });
-                    ad.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Do something else
-                        }
-                    });
+                ad.setCancelable(true);
+                ad.setIcon(R.drawable.chefinder_logo);
+                ad.setTitle("Instructions");
+                final String site = recipes[position];
+                ad.setMessage(site);
+                ad.setPositiveButton("Continue to website", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(mContext, WebActivity.class);
+                        intent.putExtra("url", site);
+                        mContext.startActivity(intent);
 
-                    AlertDialog alert = ad.create();
-                    alert.show();
-                }
-            });
-        }
+                    }
+                });
+                ad.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Do something else
+                    }
+                });
+
+                AlertDialog alert = ad.create();
+                alert.show();
+            }
+        });
+
 
         return rowView;
 
     }
 
     // references to our images
+
     private Integer[] mThumbIds = {
             R.drawable.sample_0, R.drawable.sample_1,
             R.drawable.sample_2, R.drawable.sample_3,
