@@ -8,12 +8,26 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <GridView
-            android:id="@+id/customgrid"
+        <!--<GridView-->
+            <!--android:id="@+id/customgrid"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_below="@+id/texts"-->
+            <!--android:numColumns="2" />-->
+
+        <GridView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/gridview"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/texts"
-            android:numColumns="2" />
+            android:layout_height="match_parent"
+            android:columnWidth="150dp"
+            android:numColumns="auto_fit"
+            android:verticalSpacing="50dp"
+            android:horizontalSpacing="10dp"
+            android:stretchMode="columnWidth"
+            android:gravity="center"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="60dp"/>
+        />
 
         <TextView
             android:id="@+id/texts"

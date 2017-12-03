@@ -1,7 +1,9 @@
 package com.example.csm117.chefinder;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.media.Image;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -25,9 +27,9 @@ public class ImageAdapter extends BaseAdapter {
 
     private Context mContext;
     private String[] result;
-    private int[] imageIds;
+    private String[] imageIds;
     private static LayoutInflater inflater=null;
-    public ImageAdapter(RecipesFragment recipesFragment, String[] names, int[] images) {
+    public ImageAdapter(RecipesFragment recipesFragment, String[] names, String[] images) {
         // TODO Auto-generated constructor stub
         result=names;
         mContext=recipesFragment.getActivity();
@@ -37,15 +39,15 @@ public class ImageAdapter extends BaseAdapter {
     }
 
     public int getCount() {
-        return imageIds.length;
+        return mThumbIds.length;
     }
 
     public Object getItem(int position) {
-        return position;
+        return null;
     }
 
     public long getItemId(int position) {
-        return position;
+        return 0;
     }
 
     public class Holder
@@ -58,41 +60,102 @@ public class ImageAdapter extends BaseAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
 
 //        ImageView imageView;
+//        Holder holder=new Holder();
+//        View rowView;
 //
+//        rowView = inflater.inflate(R.layout.grid_layout, null);
+//        holder.text =(TextView) rowView.findViewById(R.id.texts);
+//        imageView =(ImageView) rowView.findViewById(R.id.images);
 //
-//        if (convertView == null) {
-//            // if it's not recycled, initialize some attributes
-//            imageView = new ImageView(mContext);
-//            imageView.setLayoutParams(new GridView.LayoutParams(200, 200));
-//        } else {
-//            imageView = (ImageView) convertView;
-//        }
+//        holder.text.setText(result[position]);
+//        //holder.img.setImageResource(imageIds[position]);
+//        holder.img = imageView;
+//        Picasso.with(this.mContext).load(imageIds[position]).into(imageView);
 //
-//        //for (int i = 0; i < imageIds.length; i++)
-//            Picasso.with(this.mContext).load(imageIds[1]).resize(100, 100).into(imageView);
+//        rowView.setOnClickListener(new OnClickListener() {
 //
-//        return imageView;
-
-        Holder holder=new Holder();
+//            @Override
+//            public void onClick(View v) {
+//                // TODO Auto-generated method stub
+//                Toast.makeText(mContext, "You Clicked "+result[position], Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//
+//        return rowView;
+        ImageView imageView;
+        TextView textView;
         View rowView;
 
-        rowView = inflater.inflate(R.layout.grid_layout, null);
-        holder.text =(TextView) rowView.findViewById(R.id.texts);
-        holder.img =(ImageView) rowView.findViewById(R.id.images);
+        if (convertView == null) {
 
-        holder.text.setText(result[position]);
-        holder.img.setImageResource(imageIds[position]);
+            rowView = inflater.inflate(R.layout.grid_layout, null);
+            imageView = (ImageView) rowView.findViewById(R.id.images);
+            textView = (TextView) rowView.findViewById(R.id.texts);
+            textView.setText("boosted");
+            //textView.setText(result[position]);
+
+            String url = "http://static.food2fork.com/266803a7e1.jpg";
+            if (position == 2)
+                url = "http://static.food2fork.com/tamalecornbreaddressing_DSC14415f3b3fc8.jpg";
+            if (position == 3)
+                url = "http://static.food2fork.com/IMG_1059180x180a74c.jpg";
+
+            //Picasso.with(this.mContext).load(imageIds[position])
+            //        .resize(200, 200).into(imageView);
+
+            Picasso.with(this.mContext).load(url)
+                    .resize(200, 200).into(imageView);
+        }
+        else    {
+            rowView = (View)convertView;
+        }
 
         rowView.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
-                Toast.makeText(mContext, "You Clicked "+result[position], Toast.LENGTH_SHORT).show();
+                AlertDialog.Builder ad = new AlertDialog.Builder(mContext);
+
+                ad.setCancelable(true);
+                ad.setIcon(R.drawable.chefinder_logo);
+                ad.setTitle("Instructions");
+                ad.setMessage("http://allrecipes.com/recipe/40057/autumn-spice-ham-steak/");
+                ad.setPositiveButton("Continue to website", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(mContext,"Go make food.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                ad.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,	int which) {
+                        // Do something else
+                    }
+                });
+
+                AlertDialog alert = ad.create();
+                alert.show();
             }
         });
 
         return rowView;
 
     }
+
+    // references to our images
+    private Integer[] mThumbIds = {
+            R.drawable.sample_2, R.drawable.sample_3,
+            R.drawable.sample_4, R.drawable.sample_5,
+            R.drawable.sample_6, R.drawable.sample_7,
+            R.drawable.sample_0, R.drawable.sample_1,
+            R.drawable.sample_2, R.drawable.sample_3,
+            R.drawable.sample_4, R.drawable.sample_5,
+            R.drawable.sample_6, R.drawable.sample_7,
+            R.drawable.sample_0, R.drawable.sample_1,
+            R.drawable.sample_2, R.drawable.sample_3,
+            R.drawable.sample_4, R.drawable.sample_5,
+            R.drawable.sample_6, R.drawable.sample_7,
+            R.drawable.sample_6, R.drawable.sample_7,
+            R.drawable.sample_0, R.drawable.sample_1,
+            R.drawable.sample_2, R.drawable.sample_3,
+            R.drawable.sample_4, R.drawable.sample_5
+    };
 }

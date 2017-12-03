@@ -1,9 +1,11 @@
 package com.example.csm117.chefinder;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
@@ -39,9 +41,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import java.util.Map;
-import java.util.HashMap;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -66,25 +65,25 @@ public class RecipesFragment extends Fragment {
     private String queryString = "";
 
     // references to our images
-    private int[] mThumbIds = {
-            R.drawable.sample_2, R.drawable.sample_3,
-            R.drawable.sample_4, R.drawable.sample_5,
-            R.drawable.sample_6, R.drawable.sample_7,
-            R.drawable.sample_0, R.drawable.sample_1,
-            R.drawable.sample_2, R.drawable.sample_3,
-            R.drawable.sample_4, R.drawable.sample_5,
-            R.drawable.sample_6, R.drawable.sample_7,
-            R.drawable.sample_0, R.drawable.sample_1,
-            R.drawable.sample_2, R.drawable.sample_3,
-            R.drawable.sample_4, R.drawable.sample_5,
-            R.drawable.sample_6, R.drawable.sample_7
-    };
+//    private int[] mThumbIds = {
+//            R.drawable.sample_2, R.drawable.sample_3,
+//            R.drawable.sample_4, R.drawable.sample_5,
+//            R.drawable.sample_6, R.drawable.sample_7,
+//            R.drawable.sample_0, R.drawable.sample_1,
+//            R.drawable.sample_2, R.drawable.sample_3,
+//            R.drawable.sample_4, R.drawable.sample_5,
+//            R.drawable.sample_6, R.drawable.sample_7,
+//            R.drawable.sample_0, R.drawable.sample_1,
+//            R.drawable.sample_2, R.drawable.sample_3,
+//            R.drawable.sample_4, R.drawable.sample_5,
+//            R.drawable.sample_6, R.drawable.sample_7
+//    };
 
-    private String[] mNames = {
-            "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo",
-            "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo",
-            "doggo", "doggo"
-    };
+//    private String[] mNames = {
+//            "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo",
+//            "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo", "doggo",
+//            "doggo", "doggo"
+//    };
 
     private List<String> foodName = new ArrayList<>();
     private List<String> foodPics = new ArrayList<>();
@@ -135,12 +134,25 @@ public class RecipesFragment extends Fragment {
 
         if (user != null) {
             db = FirebaseDatabase.getInstance();
+            final ProgressDialog dialog = ProgressDialog.show(getActivity(), "","Loading..Wait.." , true);
+            dialog.show();
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    dialog.dismiss();
+                }
+            }, 5000);  // 3000 milliseconds
+
             setUpDB();
 
-            //String[] mNames = foodName.toArray(new String[foodName.size()]);
-            //String[] mThumbIds = foodName.toArray(new String[foodName.size()]);
 
-            gridView = (GridView) v.findViewById(R.id.customgrid);
+            dialog.dismiss();
+
+            String[] mNames = foodName.toArray(new String[foodName.size()]);
+            String[] mThumbIds = foodPics.toArray(new String[foodPics.size()]);
+            System.out.println("length is" + foodPics.size());
+
+            gridView = (GridView) v.findViewById(R.id.gridview);
             gridView.setAdapter(new ImageAdapter(this, mNames, mThumbIds));
 
         }
@@ -217,8 +229,8 @@ public class RecipesFragment extends Fragment {
                                 //parameters = URLEncoder.encode(parameters, "UTF-8");
                                 queryString = "http://food2fork.com/api/search?key=a53266eff3482baeae56e93836fcc011&q=" + parameters;
                                 JSONObject response = run(queryString);
-                                System.out.println(queryString);
-                                System.out.println(response);
+                                //System.out.println(queryString);
+                                //System.out.println(response);
                                 extractData(response);
                             }
                         }
