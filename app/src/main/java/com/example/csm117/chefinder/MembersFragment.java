@@ -63,6 +63,7 @@ public class MembersFragment extends Fragment {
     private ListView list;
     private ArrayAdapter<String> itemsAdapter;
     private static final int REQUEST_CODE_ADD_MEMBERS = 1;
+    private ArrayList<String> members;
 
     public MembersFragment() {
         // Required empty public constructor
@@ -108,12 +109,19 @@ public class MembersFragment extends Fragment {
                 goToAddMemberActivity();
             }
         });
-
+        members = new ArrayList<String>();
         user = FirebaseAuth.getInstance().getCurrentUser();
         System.out.println(user);
 
+
         if (user != null) {
             db = FirebaseDatabase.getInstance();
+//            try {
+//                itemsAdapter.clear();
+//            }
+//            catch (NullPointerException e) {
+//                System.out.println("npe");
+//            }
             setUpDB();
 
             list = (ListView) v.findViewById(R.id.members_list);
@@ -164,7 +172,7 @@ public class MembersFragment extends Fragment {
         dbRef.child(groupName).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                itemsAdapter.clear();
+
                 for (DataSnapshot eventSnapshot : dataSnapshot.child("members").getChildren()) {
 
                     DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users");
@@ -175,8 +183,12 @@ public class MembersFragment extends Fragment {
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {
                                 // dataSnapshot is the "issue" node with all children with id 0
-                                System.out.println(dataSnapshot.getValue());
-                                itemsAdapter.add((String)dataSnapshot.getValue());
+                                //System.out.println(dataSnapshot.getValue()+" got added to itemsadapater");
+                                //System.out.println(members.toString());
+                                if (!members.contains((String)dataSnapshot.getValue())) {
+                                    itemsAdapter.add((String) dataSnapshot.getValue());
+                                    members.add((String) dataSnapshot.getValue());
+                                }
                             }
                         }
 
@@ -219,10 +231,10 @@ public class MembersFragment extends Fragment {
     private void addMembersToDB(ArrayList<String> l){
         //for each member
         //query members key
-        //add this group to their groups
+        //add this group to their groups if group does not already contain them
         //query group name and add the new member
         //add the new member to the list view as well
-        final ArrayList<String> userIds = new ArrayList<String>();
+
         final DatabaseReference dbRef= FirebaseDatabase.getInstance().getReference("users");
         final DatabaseReference dbRef2 = FirebaseDatabase.getInstance().getReference("groups");
         for (int i = 0; i < l.size(); i++)   {
@@ -230,13 +242,17 @@ public class MembersFragment extends Fragment {
             dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    for (DataSnapshot item_snapshot : dataSnapshot.getChildren()) {
-                        if (item_snapshot.child("name").getValue().equals(name)) {
-                            userIds.add(item_snapshot.getKey());
+                    for (DataSnapshot item_snapshot : dataSnapshot.getChildren() ) {
+                        if (item_snapshot.child("name").getValue().equals(name) && !members.contains(name)) {
+                            System.out.println("Adding groupmember: " + name);
+                            members.add((String)item_snapshot.child("name").getValue());
+                            itemsAdapter.add((String)item_snapshot.child("name").getValue());
+                            System.out.println(members.toString());
                             DatabaseReference dbRef3 = dbRef.child(item_snapshot.getKey() +"/notifications");
                             dbRef3.push().setValue(user.getDisplayName() + " added you to " + groupName);
                             dbRef.child(item_snapshot.getKey() + "/groups").push().setValue(groupName);
                             dbRef2.child(groupName + "/members").push().setValue(item_snapshot.getKey());
+
                         }
                     }
                 }
@@ -246,6 +262,7 @@ public class MembersFragment extends Fragment {
                 }
             });
         }
+        itemsAdapter.notifyDataSetChanged();
     }
 
 
