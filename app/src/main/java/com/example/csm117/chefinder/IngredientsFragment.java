@@ -1,7 +1,10 @@
 package com.example.csm117.chefinder;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 //import android.support.v7.widget.LinearLayoutManager;
@@ -38,61 +41,28 @@ import java.util.ArrayList;
  * Use the {@link IngredientsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class IngredientsFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener {
-    /*
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-    */
+public class IngredientsFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemLongClickListener {
 
     private OnFragmentInteractionListener mListener;
     private Button addButton;
     private EditText addIngredientText;
     private FirebaseUser user;
     private FirebaseDatabase db;
-    //private RecyclerView list2;
     private ListView list;
     private ArrayAdapter itemsAdapter;
-    //private ArrayList<String> ingredients;
 
     public IngredientsFragment() {
-        // Required empty public constructor
+
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment IngredientsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static IngredientsFragment newInstance() {
         IngredientsFragment fragment = new IngredientsFragment();
-        /*
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        */
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /*
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-        */
     }
 
     @Override
@@ -114,15 +84,9 @@ public class IngredientsFragment extends Fragment implements View.OnClickListene
             db = FirebaseDatabase.getInstance();
             setUpDB();
 
-        /*
-        list2 = (RecyclerView)v.findViewById(R.id.list);
-        list2.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-*/
-            //ingredients = new ArrayList<>();
-
             list = (ListView) v.findViewById(R.id.list);
-            list.setOnItemClickListener(this);
+            //list.setOnItemClickListener(this);
+            list.setOnItemLongClickListener(this);
             itemsAdapter =
                     new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, new ArrayList<String>());
             list.setAdapter(itemsAdapter);
@@ -169,7 +133,6 @@ public class IngredientsFragment extends Fragment implements View.OnClickListene
             System.out.println(userId);
 
             DatabaseReference dbRef = db.getReference("users");
-                    //db.getReference(userId);
             dbRef.child(userId + "/ingredients").push().setValue((Object)ingredient);
             addIngredientText.setText("");
         }
@@ -191,17 +154,9 @@ public class IngredientsFragment extends Fragment implements View.OnClickListene
             public void onDataChange(DataSnapshot dataSnapshot) {
                 itemsAdapter.clear();
                 for (DataSnapshot eventSnapshot : dataSnapshot.child("ingredients").getChildren()) {
-                    System.out.println("data change");
                     String val = eventSnapshot.getValue(String.class);
-
-                    System.out.println(val);
                     itemsAdapter.add(val);
                 }
-
-                /*
-                for (int i = 0; i < ingredients.size(); i++)
-                    System.out.println(ingredients.get(i));
-                    */
 
                 itemsAdapter.notifyDataSetChanged();
             }
@@ -237,6 +192,7 @@ public class IngredientsFragment extends Fragment implements View.OnClickListene
         mListener = null;
     }
 
+    /*
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
         System.out.println("item " + i + " was clicked");
@@ -264,6 +220,57 @@ public class IngredientsFragment extends Fragment implements View.OnClickListene
                 System.out.println("Cancelled");
             }
         });
+    }
+    */
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int i, long l) {
+        System.out.println("LongPress detected");
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(this.getActivity(), android.R.style.Theme_Material_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(this.getActivity());
+        }
+        builder.setTitle("Delete Ingredient")
+                .setMessage("Are you sure you want to delete this ingredient?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                        DatabaseReference dbRef = db.getReference("users");
+                        Query itemQuery = dbRef.child(user.getUid() + "/ingredients");
+                        itemQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                System.out.println(dataSnapshot.getKey());
+                                System.out.println(dataSnapshot.getChildrenCount());
+                                for (DataSnapshot eventSnapshot : dataSnapshot.getChildren()) {
+                                    System.out.println(eventSnapshot.getKey());
+                                    System.out.println(eventSnapshot.getValue());
+                                    if (eventSnapshot.getValue() == (String)itemsAdapter.getItem(i)) {
+                                        eventSnapshot.getRef().removeValue();
+                                        break;
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                System.out.println("Cancelled");
+                            }
+                        });
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+
+
+        return true;
     }
 
     /**
