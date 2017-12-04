@@ -42,14 +42,6 @@ import java.util.Arrays;
  * create an instance of this fragment.
  */
 public class GroupsFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
-//    // TODO: Rename parameter arguments, choose names that match
-//    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-//    private static final String ARG_PARAM1 = "param1";
-//    private static final String ARG_PARAM2 = "param2";
-//
-//    // TODO: Rename and change types of parameters
-//    private String mParam1;
-//    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
     private View v;
@@ -57,48 +49,27 @@ public class GroupsFragment extends Fragment implements AdapterView.OnItemClickL
     private FirebaseUser user;
     private FirebaseDatabase db;
     ListView listView;
-    //ArrayList<String> groupsList;
     ArrayAdapter<String> listAdapater;
 
 
     public GroupsFragment() {
-        // Required empty public constructor
+
     }
 
-//    /**
-//     * Use this factory method to create a new instance of
-//     * this fragment using the provided parameters.
-//     *
-//     * @param param1 Parameter 1.
-//     * @param param2 Parameter 2.
-//     * @return A new instance of fragment GroupsFragment.
-//     */
-    // TODO: Rename and change types and number of parameters
     public static GroupsFragment newInstance() {
         GroupsFragment fragment = new GroupsFragment();
-//        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-//        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (getArguments() != null) {
-//            mParam1 = getArguments().getString(ARG_PARAM1);
-//            mParam2 = getArguments().getString(ARG_PARAM2);
-//        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        //groupsList = new ArrayList<String>();
-        //String[] groupNames = {};
-        //groupsList.addAll(Arrays.asList(groupNames));
         listAdapater = new ArrayAdapter<String>(getActivity(),R.layout.group_row, new ArrayList<String>());
         user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -107,7 +78,6 @@ public class GroupsFragment extends Fragment implements AdapterView.OnItemClickL
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("Button Clicked");
                 goToAddGroupActivity();
             }
         });
@@ -134,7 +104,6 @@ public class GroupsFragment extends Fragment implements AdapterView.OnItemClickL
         return v;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -176,12 +145,6 @@ public class GroupsFragment extends Fragment implements AdapterView.OnItemClickL
         startActivityForResult(i,REQUEST_CODE_ADD_GROUP);
     }
 
-
-
-    private void addGroupToDb(){
-
-    }
-
     private void addGroupToListView(String name){
         listView = v.findViewById(R.id.groupList);
 
@@ -205,32 +168,24 @@ public class GroupsFragment extends Fragment implements AdapterView.OnItemClickL
 
     @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int i, long l) {
-        System.out.println("LongPress detected");
         AlertDialog.Builder builder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder = new AlertDialog.Builder(this.getActivity(), android.R.style.Theme_Material_Dialog_Alert);
         } else {
             builder = new AlertDialog.Builder(this.getActivity());
         }
-        builder.setTitle("Delete entry")
-                .setMessage("Are you sure you want to delete this entry?")
+        builder.setTitle("Delete Group")
+                .setMessage("Are you sure you want to delete this group?")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // continue with delete
-                        System.out.println("item " + i + " was clicked");
                         DatabaseReference dbRef = db.getReference("groups");
-                        System.out.println(listAdapater.getItem(i));
                         Query itemQuery = dbRef.child(listAdapater.getItem(i) + "/members");
                         itemQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                //System.out.println("delete data");
-                                //System.out.println(dataSnapshot.getKey());
-                                //System.out.println(dataSnapshot.getChildrenCount());
                                 for (DataSnapshot eventSnapshot : dataSnapshot.getChildren()) {
-                                    //System.out.println(eventSnapshot.getKey());
                                     System.out.println("Checking " + eventSnapshot.getValue() + " vs " + user.getUid());
-
                                     if (eventSnapshot.getValue().equals(user.getUid())) {
                                         System.out.println("Removing" + eventSnapshot.getValue());
                                         eventSnapshot.getRef().removeValue();
@@ -251,7 +206,6 @@ public class GroupsFragment extends Fragment implements AdapterView.OnItemClickL
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 for (DataSnapshot eventSnapshot : dataSnapshot.getChildren()) {
-                                    //System.out.println(eventSnapshot.getKey());
                                     System.out.println("Checking " + eventSnapshot.getValue() + " vs " + listAdapater.getItem(i));
                                     if (eventSnapshot.getValue().equals(listAdapater.getItem(i))) {
                                         System.out.println("Removing" + eventSnapshot.getValue());
@@ -289,16 +243,10 @@ public class GroupsFragment extends Fragment implements AdapterView.OnItemClickL
             public void onDataChange(DataSnapshot dataSnapshot) {
                 listAdapater.clear();
                 for (DataSnapshot eventSnapshot : dataSnapshot.child("groups").getChildren()) {
-                    System.out.println("data change");
                     String val = eventSnapshot.getValue(String.class);
-                    System.out.println(val);
                     listAdapater.add(val);
                 }
 
-                /*
-                for (int i = 0; i < ingredients.size(); i++)
-                    System.out.println(ingredients.get(i));
-                    */
                 listAdapater.notifyDataSetChanged();
             }
 
