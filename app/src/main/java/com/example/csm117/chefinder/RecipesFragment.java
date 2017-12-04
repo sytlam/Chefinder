@@ -74,15 +74,6 @@ public class RecipesFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment RecipesFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static RecipesFragment newInstance(String name) {
         RecipesFragment fragment = new RecipesFragment();
         Bundle args = new Bundle();
@@ -98,7 +89,6 @@ public class RecipesFragment extends Fragment {
             groupName = getArguments().getString(GROUP_NAME);
         }
         getActivity().setTitle(R.string.title_recipes);
-        //setContentView(R.layout.fragment_recipes);
     }
 
     @Override
@@ -130,10 +120,10 @@ public class RecipesFragment extends Fragment {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 if (dataSnapshot.exists()) {
-                                    // dataSnapshot is the "issue" node with all children with id 0
                                     for (DataSnapshot issue : dataSnapshot.getChildren()) {
                                         groupIng.add((String) issue.getValue());
                                     }
+
                                     String parameters = "";
                                     boolean first = true;
                                     for (int i = 0; i < groupIng.size(); i++) {
@@ -141,23 +131,19 @@ public class RecipesFragment extends Fragment {
                                             String currentString = groupIng.get(i);
                                             parameters += currentString;
                                             first = false;
-                                        }
-                                        else {
+                                        } else {
                                             String currentString = ", " + groupIng.get(i);
                                             parameters += currentString;
                                         }
                                     }
-                                    //parameters = URLEncoder.encode(parameters, "UTF-8");
                                     queryString = "http://food2fork.com/api/search?key=a53266eff3482baeae56e93836fcc011&q=" + parameters;
                                     JSONObject response = run(queryString);
-                                    //System.out.println(queryString);
-                                    //System.out.println(response);
 
                                     extractData(response);
+
                                     String[] names = foodName.toArray(new String[foodName.size()]);
                                     String[] pictures = foodPics.toArray(new String[foodPics.size()]);
                                     String[] recipes = foodRecipe.toArray(new String[foodRecipe.size()]);
-                                    System.out.println("length is" + foodPics.size());
 
                                     gridView = (GridView) v.findViewById(R.id.gridview);
                                     gridView.setAdapter(new ImageAdapter(meme, names, pictures, recipes));
@@ -170,8 +156,6 @@ public class RecipesFragment extends Fragment {
                             }
                         });
                     }
-
-                    //itemsAdapter.notifyDataSetChanged();
                 }
 
 
@@ -183,7 +167,7 @@ public class RecipesFragment extends Fragment {
 
         }
         else {
-            Toast msg = Toast.makeText(getActivity(),"You must be signed in with Facebook to view/add group members",
+            Toast msg = Toast.makeText(getActivity(),"You must be signed in with Facebook to view recipes",
                     Toast.LENGTH_LONG);
             TextView txt = (TextView) msg.getView().findViewById(android.R.id.message);
             if (txt != null) {
@@ -219,90 +203,25 @@ public class RecipesFragment extends Fragment {
         mListener = null;
     }
 
-//    public void setUpDB() {
-//
-//        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-//        StrictMode.setThreadPolicy(policy);
-//
-//        DatabaseReference dbRef = db.getReference("groups");//db.getReference(user.getUid());
-//        dbRef.child(groupName).addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                groupIng.clear();
-//                for (DataSnapshot eventSnapshot : dataSnapshot.child("members").getChildren()) {
-//                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users");
-//
-//                    Query query = ref.child(eventSnapshot.getValue() + "/ingredients");
-//                    query.addListenerForSingleValueEvent(new ValueEventListener() {
-//                        @Override
-//                        public void onDataChange(DataSnapshot dataSnapshot) {
-//                            if (dataSnapshot.exists()) {
-//                                // dataSnapshot is the "issue" node with all children with id 0
-//                                for (DataSnapshot issue : dataSnapshot.getChildren()) {
-//                                    groupIng.add((String) issue.getValue());
-//                                }
-//                                String parameters = "";
-//                                boolean first = true;
-//                                for (int i = 0; i < groupIng.size(); i++) {
-//                                    if (first) {
-//                                        String currentString = groupIng.get(i);
-//                                        parameters += currentString;
-//                                        first = false;
-//                                    }
-//                                    else {
-//                                        String currentString = ", " + groupIng.get(i);
-//                                        parameters += currentString;
-//                                    }
-//                                }
-//                                //parameters = URLEncoder.encode(parameters, "UTF-8");
-//                                queryString = "http://food2fork.com/api/search?key=a53266eff3482baeae56e93836fcc011&q=" + parameters;
-//                                JSONObject response = run(queryString);
-//                                //System.out.println(queryString);
-//                                //System.out.println(response);
-//                                extractData(response);
-//                            }
-//                        }
-//
-//                        @Override
-//                        public void onCancelled(DatabaseError databaseError) {
-//
-//                        }
-//                    });
-//                }
-//
-//                //itemsAdapter.notifyDataSetChanged();
-//            }
-//
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//                System.out.println("database error!!" + databaseError);
-//            }
-//        });
-//
-//    }
-
     public void extractData(JSONObject response)    {
-        int recipeCount;
+        int recipeCount = 0;
         JSONArray recipes;
 
         try {
             recipeCount = response.getInt("count");
             recipes = response.getJSONArray("recipes");
-            for(int i = 0; i < recipes.length(); i++)   {
+            for (int i = 0; i < recipes.length(); i++) {
                 String name = recipes.getJSONObject(i).getString("title");
                 foodName.add(name);
                 String picURL = recipes.getJSONObject(i).getString("image_url");
                 foodPics.add(picURL);
                 String recipeURL = recipes.getJSONObject(i).getString("source_url");
                 foodRecipe.add(recipeURL);
-
             }
-        } catch(JSONException e)    {
+
+        } catch (JSONException e) {
+
         }
-        System.out.println(foodName.size());
-        System.out.println(foodPics.size());
-        System.out.println(foodRecipe.size());
 
     }
 
