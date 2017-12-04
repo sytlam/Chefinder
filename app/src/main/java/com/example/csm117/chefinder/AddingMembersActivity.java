@@ -73,12 +73,12 @@ public class AddingMembersActivity extends AppCompatActivity implements AdapterV
     private void addMembers() {
         ArrayList<String>  l = new ArrayList<String>();
         for (int i=0;i<itemsAdapter.getCount();i++){
-            System.out.println("In addmember for loop");
+            //System.out.println("In addmember for loop");
             CheckedTextView cv = (CheckedTextView)itemsAdapter.getView(i,null,null);
-            System.out.println("Name of textview " + cv.getText() + " " + checkedItems.get(i) + " Id of view: " + cv.getId());
+            //System.out.println("Name of textview " + cv.getText() + " " + checkedItems.get(i) + " Id of view: " + cv.getId());
             if (checkedItems.get(i)) {
                 l.add(cv.getText().toString());
-                System.out.println(cv.getText().toString() + "is checked.");
+                //System.out.println(cv.getText().toString() + "is checked.");
             }
         }
         //l contains checked items
@@ -98,9 +98,9 @@ public class AddingMembersActivity extends AppCompatActivity implements AdapterV
             public void onDataChange(DataSnapshot dataSnapshot) {
                 itemsAdapter.clear();
                 for (DataSnapshot eventSnapshot : dataSnapshot.child("friends").getChildren()) {
-                    System.out.println("data change");
+                    //System.out.println("data change");
                     String val = eventSnapshot.getValue(String.class);
-                    System.out.println(val);
+                    //System.out.println(val);
                     itemsAdapter.add(val);
                     checkedItems.add(false);
                 }
@@ -129,7 +129,7 @@ public class AddingMembersActivity extends AppCompatActivity implements AdapterV
     public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
         CheckedTextView v = (CheckedTextView) view;
         v.setChecked(!v.isChecked());
-        System.out.println(v.getId() + " " + v.getText() + " got checked: " + v.isChecked());
+        //System.out.println(v.getId() + " " + v.getText() + " got checked: " + v.isChecked());
         v.setCompoundDrawablesWithIntrinsicBounds(v.isChecked() ? android.R.drawable.checkbox_on_background : android.R.drawable.checkbox_off_background,0,0,0);
         checkedItems.set(i,v.isChecked());
     }
