@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -43,20 +44,22 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button homepage;
+    //private Button homepage;
     private LoginButton loginButton;
+    private ProgressBar progressBar;
     private CallbackManager callbackManager;
     private FirebaseAuth mAuth;
     private AccessTokenTracker tracker;
     private ArrayList<String> listFriend = new ArrayList<String>(0);
 
-    private int temp = 0;
+    private int loginTracker = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //testMethod();
+        /*
         homepage = (Button)findViewById(R.id.homepage_button);
         homepage.setOnClickListener(new View.OnClickListener() {
 
@@ -65,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
                 gotoHomepage();
             }
         });
+        */
         mAuth = FirebaseAuth.getInstance();
 
         // Facebook login button
@@ -76,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
             public void onSuccess(LoginResult loginResult) {
                 System.out.println("login success: " + loginResult);
                 handleFacebookAccessToken(loginResult.getAccessToken());
-                gotoHomepage();
+                //gotoHomepage();
             }
 
             @Override
@@ -92,6 +96,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        progressBar = (ProgressBar) findViewById(R.id.loginProgress);
+        progressBar.setVisibility(View.GONE);
+
         // token tracker to track if user logs out
         tracker = new AccessTokenTracker() {
             @Override
@@ -102,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
                     System.out.println("logout");
                     mAuth.signOut();
                     LoginManager.getInstance().logOut();
+                    loginTracker = 0;
                 }
             }
         };
@@ -180,6 +188,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void handleFacebookAccessToken(AccessToken token) {
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        progressBar.setVisibility(View.VISIBLE);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -200,6 +209,7 @@ public class MainActivity extends AppCompatActivity {
                             // If sign in fails, display a message to the user.
                             Toast.makeText(MainActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
+                            progressBar.setVisibility(View.GONE);
                             updateUI(null);
                         }
 
@@ -211,9 +221,9 @@ public class MainActivity extends AppCompatActivity {
     private void updateUI(FirebaseUser user) {
         if (user != null) {
             System.out.println("login success!");
-            if (temp == 0) {
+            if (loginTracker == 0) {
                 gotoHomepage();
-                temp = 1;
+                loginTracker = 1;
             }
         } else {
             System.out.println("not logged in");
