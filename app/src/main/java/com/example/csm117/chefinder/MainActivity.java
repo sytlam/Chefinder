@@ -224,6 +224,7 @@ public class MainActivity extends AppCompatActivity {
             if (loginTracker == 0) {
                 gotoHomepage();
                 loginTracker = 1;
+                progressBar.setVisibility(View.GONE);
             }
         } else {
             System.out.println("not logged in");
