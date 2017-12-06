@@ -94,7 +94,7 @@ public class ImageAdapter extends BaseAdapter {
 
                 ad.setCancelable(true);
                 ad.setIcon(R.drawable.chefinder_logo);
-                ad.setTitle("Instructions");
+                ad.setTitle("Open Recipe in Browser?");
                 final String site = recipes[position];
                 ad.setMessage(site);
                 ad.setPositiveButton("Continue to website", new DialogInterface.OnClickListener() {
